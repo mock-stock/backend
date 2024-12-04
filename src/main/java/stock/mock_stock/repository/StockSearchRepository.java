@@ -7,7 +7,7 @@ import stock.mock_stock.entity.Stock;
 
 import java.util.List;
 
-public interface StockSearchRepository extends JpaRepository {
+public interface StockSearchRepository extends JpaRepository<Stock, Long> {
 
     // 1. 이름 또는 코드로 검색 (간단한 경우)
     @Query("SELECT s FROM Stock s WHERE s.stckName LIKE %:searchQuery% OR s.stckCode = :searchQuery")
