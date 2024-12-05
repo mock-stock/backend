@@ -1,5 +1,7 @@
 package stock.mock_stock.entity;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -7,10 +9,11 @@ import java.time.LocalDate;
 
 @Data
 @Entity
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Stock {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long sid;
 
     @Column(nullable = false)
     private String stckName;
