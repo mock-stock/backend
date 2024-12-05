@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface StockSearchService {
 
-    public List<StockSearchResultDto> SearchStocks(String searchQuery);
+    public List<StockSearchResultDto> searchStocks(String searchQuery);
 
 }
