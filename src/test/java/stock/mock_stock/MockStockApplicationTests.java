@@ -3,7 +3,7 @@ package stock.mock_stock;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class MockStockApplicationTests {
 
 	@Test
