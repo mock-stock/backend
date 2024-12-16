@@ -1,11 +1,10 @@
 package stock.mock_stock.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import stock.mock_stock.dto.StockInfoDto;
+import stock.mock_stock.exception.ErrorResult;
 import stock.mock_stock.service.StockDetailService;
 
 @RestController
