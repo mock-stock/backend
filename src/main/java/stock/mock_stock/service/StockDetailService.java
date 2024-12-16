@@ -4,5 +4,5 @@ import stock.mock_stock.dto.StockInfoDto;
 
 public interface StockDetailService {
 
-    public StockInfoDto stockInfo(String stckCode);
+    public StockInfoDto getStockInfo(String stckCode);
 }

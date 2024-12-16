@@ -6,15 +6,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import stock.mock_stock.dto.StockInfoDto;
+import stock.mock_stock.service.StockDetailService;
 
 @RestController
 @RequestMapping("/stock")
 @RequiredArgsConstructor
 public class StockDetailController {
 
+    private final StockDetailService stockDetailService;
+
     @GetMapping("/{stockCode}")
     public StockInfoDto stockDetail(@PathVariable(value = "stockCode") String stockCode) {
-        // TODO: 주식시세정보 레포지토리 추가
-        return null;
+
+        return stockDetailService.getStockInfo(stockCode);
     }
 }

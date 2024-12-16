@@ -13,7 +13,7 @@ public class StockDetailServiceImpl implements StockDetailService {
     private final StockRepository stockRepository;
 
     @Override
-    public StockInfoDto stockInfo(String stckCode) {
+    public StockInfoDto getStockInfo(String stckCode) {
         Stock stock = stockRepository.findByStockCode(stckCode);
         System.out.println("stock = " + stock);
         // TODO: 한투 API 호출하여 시세정보값 반환
