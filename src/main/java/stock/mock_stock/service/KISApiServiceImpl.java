@@ -56,7 +56,7 @@ public class KISApiServiceImpl implements KISApiService{
         ResponseEntity<StockInfoOutput> response;
         try{
         // API 호출
-        response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class); // 한투에서 output상위 속서이있어 상위클래스 StockInfoOuput으로 매핑되도록 설정
+        response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class); // 한투에서 output상위 속성이있어 상위클래스 StockInfoOuput으로 매핑되도록 설정
         System.out.println("response = " + response.getBody());
 
         } catch (HttpServerErrorException e) {
