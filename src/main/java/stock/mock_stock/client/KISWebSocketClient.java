@@ -1,22 +1,39 @@
 package stock.mock_stock.client;
 
 import jakarta.websocket.*;
+import org.springframework.stereotype.Component;
 
 import java.net.URI;
 
 @ClientEndpoint
+@Component
 public class KISWebSocketClient {
 
     private Session session;
 
     public void connect(String uri) {
         try {
+
+            // 웹소켓 연결
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             session = container.connectToServer(this, new URI(uri)); // NOTE: this는 @
             System.out.println("Connected to Korea Investment WebSocket: " + uri);
 
-            // 서버로 구독 요청 메시지 전송
-            String subscriptionMessage = "{\"header\":{\"tr_id\":\"H0STCNT0\", \"tr_key\":\"005930\", \"encrypt\":\"N\"}}";
+            // 웹소켓 연결후 KIS서버로 구독 요청 메시지 전송
+            String subscriptionMessage = "{" +
+                    "\"header\":{" +
+                    "\"approval_key\":\"79974d9d-fac1-4928-8bd6-083fa458aca6\"," +
+                    "\"custtype\":\"P\"," +
+                    "\"tr_type\":\"1\"," +
+                    "\"content-type\":\"utf-8\"" +
+                    "}," +
+                    "\"body\":{" +
+                    "\"input\":{" +
+                    "\"tr_id\":\"H0STCNT0\"," +
+                    "\"tr_key\":\"005935\"" +
+                    "}" +
+                    "}" +
+                    "}";
             session.getAsyncRemote().sendText(subscriptionMessage);
 
         } catch (Exception e) {

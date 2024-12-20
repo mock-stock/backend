@@ -9,6 +9,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import stock.mock_stock.client.KISWebSocketClient;
 import stock.mock_stock.common.KISApiConstant;
 import stock.mock_stock.common.TokenStorage;
 import stock.mock_stock.dto.OAuthToken;
@@ -27,6 +28,8 @@ public class KISApiServiceImpl implements KISApiService{
 
     private final RestTemplate restTemplate;
     private final TokenStorage tokenStorage;
+    private final KISWebSocketClient kisWebSocketClient;
+
 
     @Override
     public StockInfoOutput getDomesticStockInfo(String fidCondMrktDivCode, String fidInputIscd) {
@@ -143,6 +146,12 @@ public class KISApiServiceImpl implements KISApiService{
     @Override
     public boolean checkTokenAvailable(String key) {
         return tokenStorage.isTokenAvailable(key);
+    }
+
+    @Override
+    public void startKISWebsocket() {
+        String wsUri = "ws://ops.koreainvestment.com:31000/tryitout/H0STCNT0";
+        kisWebSocketClient.connect(wsUri);
     }
 
 
