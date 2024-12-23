@@ -7,6 +7,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import stock.mock_stock.common.KISApiConstant;
+import stock.mock_stock.common.WebsocketParser;
 import stock.mock_stock.dto.WebApprovalKey;
 import stock.mock_stock.service.KISApiService;
 
@@ -96,7 +97,10 @@ public class KISWebSocketClient {
     @OnMessage
     public void onMessage(String message) {
         System.out.println("Received message: " + message);
+        if(isDelimitedMessage(message)){
 
+        WebsocketParser.parseMessage(message);
+        }
         // 여기서 받은 메시지를 처리하거나 브로커로 전달
         processMessage(message);
     }
@@ -114,6 +118,11 @@ public class KISWebSocketClient {
     private void processMessage(String message) {
         // 받은 메시지를 처리하거나 Spring 메시지 브로커로 전달
         System.out.println("Processing message: " + message);
+    }
+
+    // 구분자로 구분된 메시지인지 확인
+    public boolean isDelimitedMessage(String message) {
+        return message.contains("|") && message.contains("^");
     }
 
 }
