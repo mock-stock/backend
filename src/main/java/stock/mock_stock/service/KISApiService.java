@@ -11,5 +11,6 @@ public interface KISApiService {
     public void saveTokenInfo(String key, OAuthToken oAuthToken);
     public boolean checkTokenAvailable(String key);
     public void startKISWebsocket();
+    public String fetchWebApprovalKey(String grantType, String appKey, String appSecret);
 
 }

@@ -154,5 +154,34 @@ public class KISApiServiceImpl implements KISApiService{
         kisWebSocketClient.connect(wsUri);
     }
 
+    @Override
+    public String fetchWebApprovalKey(String grantType, String appKey, String appSecret) {
+        String url = baseUrl + "/oauth2/Approval";
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("grant_type", grantType);
+        requestBody.put("appkey", appKey);
+        requestBody.put("appsecret", appSecret);
+
+        // HTTP 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON); // JSON 형식의 데이터 전송
+
+        // 요청 엔티티 생성
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        ResponseEntity<String> response;
+        try {
+            response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
+            );
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
+        return response.getBody();
+    }
+
 
 }
