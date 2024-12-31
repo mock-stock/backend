@@ -2,12 +2,15 @@ package stock.mock_stock.client;
 
 import jakarta.websocket.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import stock.mock_stock.common.KISApiConstant;
 import stock.mock_stock.common.WebsocketParser;
+import stock.mock_stock.dto.StockInfoDto;
 import stock.mock_stock.dto.WebApprovalKey;
 import stock.mock_stock.service.KISApiService;
 
@@ -24,6 +27,7 @@ public class KISWebSocketClient {
     @Value("${api.korea-investment.base-url}")
     private String baseUrl;
     private final RestTemplate restTemplate;
+    private final SimpMessagingTemplate messagingTemplate;
     public void connect(String uri) {
         try {
 
@@ -32,8 +36,20 @@ public class KISWebSocketClient {
             session = container.connectToServer(this, new URI(uri)); // NOTE: this는 @
             System.out.println("Connected to Korea Investment WebSocket: " + uri);
 
-            WebApprovalKey approvalKey = fetchWebApprovalKey(KISApiConstant.GRANT_TYPE, KISApiConstant.APP_KEY, KISApiConstant.APP_SECRET);
 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void subscribeStock(String stockCode, String approvalKey){
+        if(session == null || !session.isOpen()){
+            System.err.println("WebSocket session is not connected."); // NOTE: 서버와 KIS연결이 끊겼을때
+            return;
+        }
+
+        try{
             // 웹소켓 연결후 KIS서버로 구독 요청 메시지 전송
             String subscriptionMessage = String.format(
                     "{" +
@@ -46,20 +62,21 @@ public class KISWebSocketClient {
                             "\"body\":{" +
                             "\"input\":{" +
                             "\"tr_id\":\"H0STCNT0\"," +
-                            "\"tr_key\":\"005935\"" +
+                            "\"tr_key\":\"%s\"" +
                             "}" +
                             "}" +
                             "}",
-                    approvalKey.getApprovalKey() // %s 자리에 approvalKey 값 삽입
+                    approvalKey // %s 자리에 approvalKey 값 삽입
+                    ,stockCode
             );
             session.getAsyncRemote().sendText(subscriptionMessage);
-
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
-    private WebApprovalKey fetchWebApprovalKey(String grantType, String appKey, String appSecret) {
+
+    public WebApprovalKey fetchWebApprovalKey(String grantType, String appKey, String appSecret) {
         String url = baseUrl + "/oauth2/Approval";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("grant_type", grantType);
@@ -98,11 +115,13 @@ public class KISWebSocketClient {
     public void onMessage(String message) {
         System.out.println("Received message: " + message);
         if(isDelimitedMessage(message)){
-
-        WebsocketParser.parseMessage(message);
+            processMessage(message);
         }
-        // 여기서 받은 메시지를 처리하거나 브로커로 전달
-        processMessage(message);
+   if(message.contains("PINGPONG")){
+       String pongMessage = "{\"header\":{\"tr_id\":\"PINGPONG\"}}";
+       session.getAsyncRemote().sendText(pongMessage);
+   }
+
     }
 
     @OnClose
@@ -117,7 +136,8 @@ public class KISWebSocketClient {
 
     private void processMessage(String message) {
         // 받은 메시지를 처리하거나 Spring 메시지 브로커로 전달
-        System.out.println("Processing message: " + message);
+        StockInfoDto parsedStock = WebsocketParser.parseMessage(message);
+        messagingTemplate.convertAndSend("/stocks/" + parsedStock.getStckCode(), parsedStock);         // 여기서 받은 메시지를 처리, 브로커로 전달
     }
 
     // 구분자로 구분된 메시지인지 확인
