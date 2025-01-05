@@ -28,6 +28,7 @@ public class KISWebSocketClient {
     private String baseUrl;
     private final RestTemplate restTemplate;
     private final SimpMessagingTemplate messagingTemplate;
+    private final WebsocketParser websocketParser;
     public void connect(String uri) {
         try {
 
@@ -136,7 +137,8 @@ public class KISWebSocketClient {
 
     private void processMessage(String message) {
         // 받은 메시지를 처리하거나 Spring 메시지 브로커로 전달
-        StockInfoDto parsedStock = WebsocketParser.parseMessage(message);
+        StockInfoDto parsedStock = websocketParser.parseMessage(message);
+        System.out.println("parsedStock = " + parsedStock);
         messagingTemplate.convertAndSend("/stocks/" + parsedStock.getStckCode(), parsedStock);         // 여기서 받은 메시지를 처리, 브로커로 전달
     }
 

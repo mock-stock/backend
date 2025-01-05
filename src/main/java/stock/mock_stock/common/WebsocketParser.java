@@ -1,10 +1,16 @@
 package stock.mock_stock.common;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import stock.mock_stock.dto.StockInfoDto;
 
+@Component
+@RequiredArgsConstructor
 public class WebsocketParser {
 
-    public static StockInfoDto parseMessage(String message) {
+    private final StockNameCache stockNameCache;
+
+    public StockInfoDto parseMessage(String message) {
         // Step 1: |로 분리
         String[] parts = message.split("\\|");
 
@@ -20,11 +26,12 @@ public class WebsocketParser {
         System.out.println("전일 대비: " + fields[4]);   // -1600
         System.out.println("등락률: " + fields[5]);      // -2.91
 
+        String stockName = stockNameCache.getStockName(fields[0]); //
 
         // Step 3: StockInfoDto 생성 및 반환
         return new StockInfoDto(
                 Long.parseLong(fields[0]), // sid: 종목 코드 (숫자로 변환)
-                "Unknown",                 // stckName: 이름은 여기서 처리하지 않음 , TODO: 이부분 수정필요
+                stockName != null ? stockName : "Unknown",
                 fields[0],                 // stckCode: 종목 코드
                 Long.parseLong(fields[2]), // stckCurPrice: 현재 체결가
                 Long.parseLong(fields[4]), // stckPrevClsDiffPrice: 전일 대비
