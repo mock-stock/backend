@@ -19,12 +19,12 @@ public class WebsocketParser {
         String[] fields = tradeData.split("\\^");
 
         // Step 3: 주요 데이터 출력
-        System.out.println("종목 코드: " + fields[0]);   // 005930
-        System.out.println("체결 시간: " + fields[1]);   // 111007
-        System.out.println("현재 체결가: " + fields[2]); // 53300
-        System.out.println("체결 구분: " + fields[3]);   // 5
-        System.out.println("전일 대비: " + fields[4]);   // -1600
-        System.out.println("등락률: " + fields[5]);      // -2.91
+//        System.out.println("종목 코드: " + fields[0]);   // 005930
+//        System.out.println("체결 시간: " + fields[1]);   // 111007
+//        System.out.println("현재 체결가: " + fields[2]); // 53300
+//        System.out.println("체결 구분: " + fields[3]);   // 5
+//        System.out.println("전일 대비: " + fields[4]);   // -1600
+//        System.out.println("등락률: " + fields[5]);      // -2.91
 
         String stockName = stockNameCache.getStockName(fields[0]); //
 
