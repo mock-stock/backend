@@ -1,14 +1,10 @@
 package stock.mock_stock.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import stock.mock_stock.dto.StockInfoDto;
 import stock.mock_stock.dto.StockInfoOutput;
-import stock.mock_stock.dto.StockKisDto;
 import stock.mock_stock.entity.Stock;
 import stock.mock_stock.exception.InvalidStockCodeException;
 import stock.mock_stock.exception.NotFoundStockException;

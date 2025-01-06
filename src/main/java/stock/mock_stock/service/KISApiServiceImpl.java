@@ -9,6 +9,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import stock.mock_stock.client.KISWebSocketClient;
 import stock.mock_stock.common.KISApiConstant;
 import stock.mock_stock.common.TokenStorage;
 import stock.mock_stock.dto.OAuthToken;
@@ -27,6 +28,8 @@ public class KISApiServiceImpl implements KISApiService{
 
     private final RestTemplate restTemplate;
     private final TokenStorage tokenStorage;
+    private final KISWebSocketClient kisWebSocketClient;
+
 
     @Override
     public StockInfoOutput getDomesticStockInfo(String fidCondMrktDivCode, String fidInputIscd) {
@@ -56,7 +59,7 @@ public class KISApiServiceImpl implements KISApiService{
         ResponseEntity<StockInfoOutput> response;
         try{
         // API 호출
-        response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class); // 한투에서 output상위 속서이있어 상위클래스 StockInfoOuput으로 매핑되도록 설정
+        response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class); // 한투에서 output상위 속성이있어 상위클래스 StockInfoOuput으로 매핑되도록 설정
         System.out.println("response = " + response.getBody());
 
         } catch (HttpServerErrorException e) {
@@ -143,6 +146,41 @@ public class KISApiServiceImpl implements KISApiService{
     @Override
     public boolean checkTokenAvailable(String key) {
         return tokenStorage.isTokenAvailable(key);
+    }
+
+    @Override
+    public void startKISWebsocket() {
+        String wsUri = "ws://ops.koreainvestment.com:31000/tryitout/H0STCNT0";
+        kisWebSocketClient.connect(wsUri);
+    }
+
+    @Override
+    public String fetchWebApprovalKey(String grantType, String appKey, String appSecret) {
+        String url = baseUrl + "/oauth2/Approval";
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("grant_type", grantType);
+        requestBody.put("appkey", appKey);
+        requestBody.put("appsecret", appSecret);
+
+        // HTTP 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON); // JSON 형식의 데이터 전송
+
+        // 요청 엔티티 생성
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        ResponseEntity<String> response;
+        try {
+            response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
+            );
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
+        return response.getBody();
     }
 
 

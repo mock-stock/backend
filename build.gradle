@@ -30,6 +30,7 @@ dependencies {
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 	implementation 'org.json:json:20240303'
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2' // 버전은 최신으로
+	implementation 'org.springframework.boot:spring-boot-starter-websocket' // websocket의 stomp를 위해 설치
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
