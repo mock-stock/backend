@@ -13,7 +13,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     @Query("SELECT s FROM Stock s")
     List<Stock> findAllStocks();
 
-    @Query("SELECT s.stckCode AS stckCode, s.stckName AS stckName FROM Stock s")
+    @Query("SELECT s.sid AS sid, s.stckCode AS stckCode, s.stckName AS stckName FROM Stock s")
     List<StockNameProjection> findAllStockNames();
 
     // 1. 이름 또는 코드로 검색 (간단한 경우)

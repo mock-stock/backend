@@ -25,17 +25,20 @@ public class WebsocketParser {
 //        System.out.println("체결 구분: " + fields[3]);   // 5
 //        System.out.println("전일 대비: " + fields[4]);   // -1600
 //        System.out.println("등락률: " + fields[5]);      // -2.91
-
-        String stockName = stockNameCache.getStockName(fields[0]); //
-
+        String stckCode = fields[0];
+        String stockName = stockNameCache.getStockNameAndSid(stckCode).getStckName();
+        Long stockId = stockNameCache.getStockNameAndSid(stckCode).getSid();
+        Long stckCurPrice = Long.parseLong(fields[2]);
+        Long stckPrevClsDiffPrice = Long.parseLong(fields[4]);
+        Double stckPrevClsDiffPercent = Double.parseDouble(fields[5]);
         // Step 3: StockInfoDto 생성 및 반환
         return new StockInfoDto(
-                Long.parseLong(fields[0]), // sid: 종목 코드 (숫자로 변환)
+                stockId,
                 stockName != null ? stockName : "Unknown",
-                fields[0],                 // stckCode: 종목 코드
-                Long.parseLong(fields[2]), // stckCurPrice: 현재 체결가
-                Long.parseLong(fields[4]), // stckPrevClsDiffPrice: 전일 대비
-                Double.parseDouble(fields[5])); // stckPrevClsDiffPercent: 등락률
+                stckCode,                 // stckCode: 종목 코드
+                stckCurPrice, // stckCurPrice: 현재 체결가
+                stckPrevClsDiffPrice, // stckPrevClsDiffPrice: 전일 대비
+                stckPrevClsDiffPercent); // stckPrevClsDiffPercent: 등락률
 
     }
 
