@@ -70,6 +70,7 @@ public class KISWebSocketClient {
                     approvalKey // %s 자리에 approvalKey 값 삽입
                     ,stockCode
             );
+            System.out.println("session = " + session);
             session.getAsyncRemote().sendText(subscriptionMessage);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -114,7 +115,7 @@ public class KISWebSocketClient {
 
     @OnMessage
     public void onMessage(String message) {
-        if(message.length() > 5000){
+        if(message.length() > 3000){
         System.out.println("Received message: " + message);
         System.out.println("Received message length : " + message.length());
 
