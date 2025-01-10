@@ -35,7 +35,7 @@ public class WebsocketController {
             } ); //  TODO : 에러 처리 프론트한테 보여주는 방식 추가 : 별도의 특정 유저에게 전달해야되는데 아무리해도안됨
             return "send completed";
         } catch (Exception e) {
-            return "something wrong";
+            return "error:" + e;
 //            throw new RuntimeException(e);
         }
 

@@ -13,6 +13,8 @@ import stock.mock_stock.dto.WebApprovalKey;
 import stock.mock_stock.service.KISApiService;
 
 import java.net.URI;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,12 +62,14 @@ public class KISWebSocketClient {
             System.err.println("WebSocket session is not connected."); // NOTE: 서버와 KIS연결이 끊겼을때
             LocalTime now = LocalTime.now();
             LocalTime cutoffTime = LocalTime.of(18, 0);
-            if(now.isBefore(cutoffTime)){
+            DayOfWeek today = LocalDate.now().getDayOfWeek();
+            if(now.isBefore(cutoffTime) && (today != DayOfWeek.SATURDAY && today != DayOfWeek.SUNDAY)){
                 System.out.println("reconnecting");
                 String wsUri = "ws://ops.koreainvestment.com:31000/tryitout/H0STCNT0";
                 connect(wsUri);
             } else{
-                System.out.println("try before 6PM");
+                System.out.println("try before 6PM on weekdays");
+                throw new RuntimeException("try before 6PM on weekdays");
             }
         }
 
