@@ -13,7 +13,7 @@ public class KISWebsocketScheduler {
 
     private final KISWebSocketClient kisWebSocketClient;
 
-    @Scheduled(cron = "0 55 8 * * ?")
+    @Scheduled(cron = "0 55 8 ? * MON-FRI")
     public void connectKISWebsocket(){
         if(!kisWebSocketClient.isSessionOpen()){
             try{
