@@ -13,6 +13,7 @@ import stock.mock_stock.dto.WebApprovalKey;
 import stock.mock_stock.service.KISApiService;
 
 import java.net.URI;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ public class KISWebSocketClient {
     private final RestTemplate restTemplate;
     private final SimpMessagingTemplate messagingTemplate;
     private final WebsocketParser websocketParser;
+//    private final KISWebSocketClient kisWebSocketClient;
     public void connect(String uri) {
         try {
 
@@ -44,10 +46,27 @@ public class KISWebSocketClient {
         }
     }
 
+    public void closeConnection() {
+            try {
+                session.close();
+                System.out.println("WebSocket connection closed.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+    }
+
     public void subscribeStock(String stockCode, String approvalKey){
         if(session == null || !session.isOpen()){
             System.err.println("WebSocket session is not connected."); // NOTE: 서버와 KIS연결이 끊겼을때
-            return;
+            LocalTime now = LocalTime.now();
+            LocalTime cutoffTime = LocalTime.of(18, 0);
+            if(now.isBefore(cutoffTime)){
+                System.out.println("reconnecting");
+                String wsUri = "ws://ops.koreainvestment.com:31000/tryitout/H0STCNT0";
+                connect(wsUri);
+            } else{
+                System.out.println("try before 6PM");
+            }
         }
 
         try{
@@ -70,6 +89,7 @@ public class KISWebSocketClient {
                     approvalKey // %s 자리에 approvalKey 값 삽입
                     ,stockCode
             );
+            System.out.println("session = " + session);
             session.getAsyncRemote().sendText(subscriptionMessage);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -106,6 +126,9 @@ public class KISWebSocketClient {
         return response.getBody();
     }
 
+    public boolean isSessionOpen() {
+        return session != null && session.isOpen();
+    }
 
     @OnOpen
     public void onOpen(Session session) {
@@ -114,11 +137,7 @@ public class KISWebSocketClient {
 
     @OnMessage
     public void onMessage(String message) {
-        if(message.length() > 5000){
-        System.out.println("Received message: " + message);
-        System.out.println("Received message length : " + message.length());
-
-        }
+//        System.out.println("Received message: " + message);
         if(isDelimitedMessage(message)){
             processMessage(message);
         }
@@ -132,8 +151,7 @@ public class KISWebSocketClient {
     @OnClose
     public void onClose(Session session, CloseReason closeReason) {
         System.out.println("WebSocket connection closed: " + closeReason.getReasonPhrase());
-        String wsUri = "ws://ops.koreainvestment.com:31000/tryitout/H0STCNT0";
-        connect(wsUri); // 끊겼을때 재연결하는것 까진 좋지만, 구독역시 끊기면서 다 날라감 이부분 어떻게할지 추후 생각
+
     }
 
     @OnError
