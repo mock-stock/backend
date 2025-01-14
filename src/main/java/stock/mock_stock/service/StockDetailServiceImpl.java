@@ -29,13 +29,14 @@ public class StockDetailServiceImpl implements StockDetailService {
         StockInfoOutput result = kisApiService.getDomesticStockInfo("J", stckCode);
         // 결과 DTO 변환
         // TODO: 현시세, 종가대비차익 부분 임시 값 넣어놓고 추후 실제 데이터로 변경
-        StockInfoDto stockInfoDto = new StockInfoDto(
-                stock.getSid(),
-                stock.getStckName(),
-                stock.getStckCode(),
-                result.getStockKisDto().getStckPrpr(),
-                result.getStockKisDto().getPrdyVrss(),
-                result.getStockKisDto().getPrdyCtrt() );
-        return stockInfoDto;
+
+        return StockInfoDto.builder()
+                .sid(stock.getSid())
+                .stckName(stock.getStckName())
+                .stckCode(stock.getStckCode())
+                .stckCurPrice(result.getStockKisDto().getStckPrpr())
+                .stckPrevClsDiffPrice(result.getStockKisDto().getPrdyVrss())
+                .stckPrevClsDiffPercent(result.getStockKisDto().getPrdyCtrt())
+                .build();
     }
 }
