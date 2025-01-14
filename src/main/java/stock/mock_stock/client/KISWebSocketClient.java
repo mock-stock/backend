@@ -58,11 +58,14 @@ public class KISWebSocketClient {
     }
 
     public void subscribeStock(String stockCode, String approvalKey){
+        DayOfWeek today = LocalDate.now().getDayOfWeek();
+        System.out.println("today = " + today);
         if(session == null || !session.isOpen()){
             System.err.println("WebSocket session is not connected."); // NOTE: 서버와 KIS연결이 끊겼을때
             LocalTime now = LocalTime.now();
             LocalTime cutoffTime = LocalTime.of(18, 0);
-            DayOfWeek today = LocalDate.now().getDayOfWeek();
+
+
             if(now.isBefore(cutoffTime) && (today != DayOfWeek.SATURDAY && today != DayOfWeek.SUNDAY)){
                 System.out.println("reconnecting");
                 String wsUri = "ws://ops.koreainvestment.com:31000/tryitout/H0STCNT0";
@@ -136,7 +139,7 @@ public class KISWebSocketClient {
 
     @OnOpen
     public void onOpen(Session session) {
-        System.out.println("WebSocket connection opened: " + session.getId());
+        System.out.println("WebSocket connection opened id : " + session.getId());
     }
 
     @OnMessage

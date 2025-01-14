@@ -23,6 +23,8 @@ public class KISWebsocketScheduler {
             }   catch (Exception e) {
                 log.error("에러발생", e);
             }
+        } else{
+            System.out.println("WebSocket is already opened");
         }
     }
 
@@ -38,11 +40,6 @@ public class KISWebsocketScheduler {
         } else {
             System.out.println("WebSocket is already closed or not initialized.");
         }
-    }
-
-    @Scheduled(cron ="0 7 12 * * ?")
-    public void testScheduled(){
-        System.out.println("test!!!!");
     }
 
 }
