@@ -17,6 +17,7 @@ import stock.mock_stock.dto.StockInfoOutput;
 import stock.mock_stock.dto.StockKisDto;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,12 +100,17 @@ public class KISApiServiceImpl implements KISApiService{
 
     @Override
     public StockInfoOutput getStockHistoryInfo(String fidCondMrktDivCode, String fidInputIscd, LocalDate fidInputDate1, LocalDate fidInputDate2, String interval) {
+
+        // LocalDate를 yyyyMMdd 형식으로 변환
+        String formattedFromDate = fidInputDate1.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String formattedToDate = fidInputDate2.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        System.out.println(formattedToDate);
         // URL 구성
         String url = baseUrl + "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice"
                 + "?FID_COND_MRKT_DIV_CODE=" + fidCondMrktDivCode
                 + "&FID_INPUT_ISCD=" + fidInputIscd
-                + "&FID_INPUT_DATE_1=" + fidInputDate1
-                + "&FID_INPUT_DATE_2=" + fidInputDate2
+                + "&FID_INPUT_DATE_1=" + formattedFromDate
+                + "&FID_INPUT_DATE_2=" + formattedToDate
                 + "&FID_PERIOD_DIV_CODE=" + interval
                 + "&FID_ORG_ADJ_PRC=0";
 
