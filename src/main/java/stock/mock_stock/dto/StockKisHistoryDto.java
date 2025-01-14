@@ -31,6 +31,9 @@ public class StockKisHistoryDto {
     @JsonProperty("acml_vol")
     private Long acmlVol;
 
+    @JsonProperty("prdy_vrss")
+    private Long prdyVrss;
+
     @JsonProperty("stck_change_rate")
     private Double stckChangeRate;
 

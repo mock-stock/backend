@@ -50,6 +50,11 @@ public class StockDetailServiceImpl implements StockDetailService {
         Stock stock = stockValidator.getStock(stckCode);
 
         StockInfoOutput result = kisApiService.getStockHistoryInfo("J", stckCode, fromDate, toDate, interval);
-        return result.getStockKisHistoryDto().stream().peek(dto -> dto.setStckName(stock.getStckName())).toList();
+        return result.getStockKisHistoryDto().stream().peek(dto -> {
+            dto.setStckName(stock.getStckName());
+            // NOTE: 공식 : 전일대비액(오늘종가 - 어제종가) / 어제종가 * 100 = prdy_vrss(종가차액)/stck_clpr - prdy_vrss(현재종가 - 종가대비 = 어제종가), 어제종가액을 주지않기에 이런식으로 공식만들어 사용
+            Double changedRate = (double)(dto.getPrdyVrss()/(dto.getStckClpr() - dto.getPrdyVrss())) * 100;
+            dto.setStckChangeRate(Math.round(changedRate*100)/100.0); // 두자리수만 표시하기위해
+        }).toList();
     }
 }
