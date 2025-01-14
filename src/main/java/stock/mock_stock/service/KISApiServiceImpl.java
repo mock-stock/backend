@@ -52,12 +52,12 @@ public class KISApiServiceImpl implements KISApiService{
 
         // HttpEntity 생성 (Header 포함)
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        System.out.println("entity = " + entity);
+
         ResponseEntity<StockInfoOutput> response;
         try{
         // API 호출
         response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class); // 한투에서 output상위 속성이있어 상위클래스 StockInfoOuput으로 매핑되도록 설정
-        System.out.println("response = " + response.getBody());
+//        System.out.println("response = " + response.getBody());
 
         } catch (HttpServerErrorException e) {
             // 예외로부터 응답 본문(JSON)을 추출
@@ -104,7 +104,7 @@ public class KISApiServiceImpl implements KISApiService{
         // LocalDate를 yyyyMMdd 형식으로 변환
         String formattedFromDate = fidInputDate1.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String formattedToDate = fidInputDate2.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        System.out.println(formattedToDate);
+
         // URL 구성
         String url = baseUrl + "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice"
                 + "?FID_COND_MRKT_DIV_CODE=" + fidCondMrktDivCode
@@ -126,12 +126,11 @@ public class KISApiServiceImpl implements KISApiService{
 
         // HttpEntity 생성 (Header 포함)
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        System.out.println("entity = " + entity);
+
         ResponseEntity<StockInfoOutput> response;
         try{
             // API 호출
             response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class); // 한투에서 output상위 속성이있어 상위클래스 StockInfoOuput으로 매핑되도록 설정
-            System.out.println("response = " + response.getBody());
 
         } catch (HttpServerErrorException e) {
             // 예외로부터 응답 본문(JSON)을 추출
@@ -190,7 +189,7 @@ public class KISApiServiceImpl implements KISApiService{
             // 결과 확인
              token = response.getBody();
             if (token != null) {
-                System.out.println("Access Token: " + token.getAccessToken());
+
                 System.out.println("Access Token Expired: " + token.getAccessTokenExpired());
                 System.out.println("Token Type: " + token.getTokenType());
                 System.out.println("Expires In: " + token.getExpireIn());

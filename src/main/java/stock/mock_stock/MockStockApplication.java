@@ -10,7 +10,7 @@ public class MockStockApplication {
 
 	public static void main(String[] args) {
 		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
-		System.out.println("Default TimeZone set to Asia/Seoul");
+
 		SpringApplication.run(MockStockApplication.class, args);
 	}
 

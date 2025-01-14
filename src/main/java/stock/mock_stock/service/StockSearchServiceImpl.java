@@ -19,7 +19,7 @@ public class StockSearchServiceImpl implements StockSearchService{
     public List<StockSearchResultDto> searchStocks(String searchQuery) {
         // 레포지토리에서 검색 수행
         List<Stock> stocks = stockRepository.findAllByQuery(searchQuery);
-        System.out.println("stocks = " + stocks);
+//        System.out.println("stocks = " + stocks);
         // 검색 결과를 DTO로 변환
         return stocks.stream().map(stock -> {
             StockSearchResultDto resultDto = new StockSearchResultDto(stock.getSid(),stock.getStckName(),stock.getStckCode() , null ); // TODO: 추후 isWatched 연동하는거 찾아볼것

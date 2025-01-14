@@ -59,7 +59,6 @@ public class KISWebSocketClient {
 
     public void subscribeStock(String stockCode, String approvalKey){
         DayOfWeek today = LocalDate.now().getDayOfWeek();
-        System.out.println("today = " + today);
         if(session == null || !session.isOpen()){
             System.err.println("WebSocket session is not connected."); // NOTE: 서버와 KIS연결이 끊겼을때
             LocalTime now = LocalTime.now();

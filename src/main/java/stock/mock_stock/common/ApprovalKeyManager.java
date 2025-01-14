@@ -15,7 +15,7 @@ public class ApprovalKeyManager {
 
     public synchronized String getApprovalKey(){
         if(approvalKey == null || System.currentTimeMillis()> expirationTime){
-            System.out.println("approvalKey = " + approvalKey);
+
             System.out.println("expirationTime = " + expirationTime);
             System.out.println("(System.currentTimeMillis() > expirationTime) = " + (System.currentTimeMillis() > expirationTime));
 

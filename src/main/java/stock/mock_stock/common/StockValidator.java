@@ -16,7 +16,6 @@ public class StockValidator {
     public Stock getStock(String stckCode) {
         if(stckCode.length() != 6) throw new InvalidStockCodeException("Invalid stock code : " + stckCode);
         Stock stock = stockRepository.findByStockCode(stckCode);
-        System.out.println("stock = " + stock);
         if(stock == null) throw new NotFoundStockException("Not Found stock code: " + stckCode);
         return stock;
     }
