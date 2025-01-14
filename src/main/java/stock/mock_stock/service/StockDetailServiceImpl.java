@@ -3,12 +3,17 @@ package stock.mock_stock.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import stock.mock_stock.common.StockValidator;
 import stock.mock_stock.dto.StockInfoDto;
 import stock.mock_stock.dto.StockInfoOutput;
+import stock.mock_stock.dto.StockKisHistoryDto;
 import stock.mock_stock.entity.Stock;
 import stock.mock_stock.exception.InvalidStockCodeException;
 import stock.mock_stock.exception.NotFoundStockException;
 import stock.mock_stock.repository.StockRepository;
+
+import java.time.LocalDate;
+import java.util.List;
 
 
 @Slf4j
@@ -18,12 +23,11 @@ public class StockDetailServiceImpl implements StockDetailService {
 
     private final StockRepository stockRepository;
     private final KISApiService kisApiService;
+    private final StockValidator stockValidator;
+
     @Override
     public StockInfoDto getStockInfo(String stckCode) {
-        if(stckCode.length() != 6) throw new InvalidStockCodeException("Invalid stock code : " + stckCode);
-        Stock stock = stockRepository.findByStockCode(stckCode);
-        System.out.println("stock = " + stock);
-        if(stock == null) throw new NotFoundStockException("Not Found stock code: " + stckCode);
+        Stock stock = stockValidator.getStock(stckCode);
 
         // TODO: 한투 API 호출하여 시세정보값 반환
         StockInfoOutput result = kisApiService.getDomesticStockInfo("J", stckCode);
@@ -38,5 +42,14 @@ public class StockDetailServiceImpl implements StockDetailService {
                 .stckPrevClsDiffPrice(result.getStockKisDto().getPrdyVrss())
                 .stckPrevClsDiffPercent(result.getStockKisDto().getPrdyCtrt())
                 .build();
+    }
+
+
+    @Override
+    public List<StockKisHistoryDto> getStockHistory(String stckCode, LocalDate fromDate, LocalDate toDate, String interval) {
+        Stock stock = stockValidator.getStock(stckCode);
+
+        StockInfoOutput result = kisApiService.getStockHistoryInfo("J", stckCode, fromDate, toDate, interval);
+        return result.getStockKisHistoryDto().stream().peek(dto -> dto.setStckName(stock.getStckName())).toList();
     }
 }
