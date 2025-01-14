@@ -16,6 +16,7 @@ import stock.mock_stock.dto.OAuthToken;
 import stock.mock_stock.dto.StockInfoOutput;
 import stock.mock_stock.dto.StockKisDto;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,20 +39,15 @@ public class KISApiServiceImpl implements KISApiService{
                 + "?FID_COND_MRKT_DIV_CODE=" + fidCondMrktDivCode
                 + "&FID_INPUT_ISCD=" + fidInputIscd;
 
-        OAuthToken token;
         // NOTE: 유효한 토큰있을시 스토리지에서 가져옴
-        if(checkTokenAvailable("kis_token")){
-            token = getTokenInfo("kis_token");
-        } else{ // NOTE: 유효한 토큰이없을시 Fetch
-          token = fetchOauthToken(KISApiConstant.GRANT_TYPE, KISApiConstant.APP_KEY, KISApiConstant.APP_SECRET );
-        }
+        OAuthToken token = getoAuthToken();;
 
         // Header 구성
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+ token.getAccessToken());
         headers.set("appkey", KISApiConstant.APP_KEY);
         headers.set("appsecret", KISApiConstant.APP_SECRET);
-        headers.set("tr_id", KISApiConstant.TR_ID);
+        headers.set("tr_id", KISApiConstant.TR_ID_INQUIRE_PRICE);
 
         // HttpEntity 생성 (Header 포함)
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -61,6 +57,75 @@ public class KISApiServiceImpl implements KISApiService{
         // API 호출
         response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class); // 한투에서 output상위 속성이있어 상위클래스 StockInfoOuput으로 매핑되도록 설정
         System.out.println("response = " + response.getBody());
+
+        } catch (HttpServerErrorException e) {
+            // 예외로부터 응답 본문(JSON)을 추출
+            String responseBody = e.getResponseBodyAsString();
+            System.out.println("Error Response: " + responseBody);
+
+            // JSON 파싱
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+                // 특정 값 추출 (예: "msg_cd")
+                String msgCode = jsonNode.get("msg_cd").asText();
+
+                // msg_cd 값에 따른 로직 처리
+                if ("EGW00123".equals(msgCode)) {
+                    System.out.println("토큰 만료: 토큰 재발급 로직 실행");
+                    // 재발급 로직 구현
+//                    getDomesticStockInfo();
+                } else {
+                    System.out.println("기타 오류 처리: " + msgCode);
+                }
+            } catch (Exception ex) {
+                System.err.println("JSON 파싱 오류: " + ex.getMessage());
+            }
+            return null;
+        }
+        return response.getBody();
+    }
+
+    private OAuthToken getoAuthToken() {
+        OAuthToken token;
+        if(checkTokenAvailable("kis_token")){
+            token = getTokenInfo("kis_token");
+        } else{ // NOTE: 유효한 토큰이없을시 Fetch
+          token = fetchOauthToken(KISApiConstant.GRANT_TYPE, KISApiConstant.APP_KEY, KISApiConstant.APP_SECRET );
+        }
+        return token;
+    }
+
+    @Override
+    public StockInfoOutput getStockHistoryInfo(String fidCondMrktDivCode, String fidInputIscd, LocalDate fidInputDate1, LocalDate fidInputDate2, String interval) {
+        // URL 구성
+        String url = baseUrl + "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice"
+                + "?FID_COND_MRKT_DIV_CODE=" + fidCondMrktDivCode
+                + "&FID_INPUT_ISCD=" + fidInputIscd
+                + "&FID_INPUT_DATE_1=" + fidInputDate1
+                + "&FID_INPUT_DATE_2=" + fidInputDate2
+                + "&FID_PERIOD_DIV_CODE=" + interval
+                + "&FID_ORG_ADJ_PRC=0";
+
+        // NOTE: 유효한 토큰있을시 스토리지에서 가져옴
+        OAuthToken token = getoAuthToken();;
+
+        // Header 구성
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer "+ token.getAccessToken());
+        headers.set("appkey", KISApiConstant.APP_KEY);
+        headers.set("appsecret", KISApiConstant.APP_SECRET);
+        headers.set("tr_id", KISApiConstant.TR_ID_INQUIRE_DAILY_ITEMCHART_PRICE);
+
+        // HttpEntity 생성 (Header 포함)
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        System.out.println("entity = " + entity);
+        ResponseEntity<StockInfoOutput> response;
+        try{
+            // API 호출
+            response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class); // 한투에서 output상위 속성이있어 상위클래스 StockInfoOuput으로 매핑되도록 설정
+            System.out.println("response = " + response.getBody());
 
         } catch (HttpServerErrorException e) {
             // 예외로부터 응답 본문(JSON)을 추출
