@@ -42,9 +42,4 @@ public class KISWebsocketScheduler {
         }
     }
 
-    @Scheduled(cron ="0 7 12 * * ?")
-    public void testScheduled(){
-        System.out.println("test!!!!");
-    }
-
 }
