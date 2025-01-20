@@ -16,6 +16,12 @@ public class StockKisHistoryDto {
     @JsonProperty("stck_bsop_date")
     private String stckBsopDate;
 
+    @JsonProperty("stck_cntg_hour")
+    private String stckCntgHour;
+
+    @JsonProperty("stck_prpr")
+    private Long stckPrpr;
+
     @JsonProperty("stck_oprc")
     private Long stckOprc;
 
@@ -30,6 +36,11 @@ public class StockKisHistoryDto {
 
     @JsonProperty("acml_vol")
     private Long acmlVol;
+
+
+    @JsonProperty("cntg_vol")
+    private Long cntgVol;
+
 
     @JsonProperty("prdy_vrss")
     private Long prdyVrss;
