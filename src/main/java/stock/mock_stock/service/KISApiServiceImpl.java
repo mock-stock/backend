@@ -13,10 +13,7 @@ import stock.mock_stock.client.KISWebSocketClient;
 import stock.mock_stock.common.KISApiConstant;
 import stock.mock_stock.common.StockValidator;
 import stock.mock_stock.common.TokenStorage;
-import stock.mock_stock.dto.OAuthToken;
-import stock.mock_stock.dto.StockInfoOutput;
-import stock.mock_stock.dto.StockKisDto;
-import stock.mock_stock.dto.StockKisHistoryDto;
+import stock.mock_stock.dto.*;
 import stock.mock_stock.entity.Stock;
 
 import java.time.LocalDate;
@@ -76,7 +73,7 @@ public class KISApiServiceImpl implements KISApiService{
 
                 // 특정 값 추출 (예: "msg_cd")
                 String msgCode = jsonNode.get("msg_cd").asText();
-
+                String message = jsonNode.get("msg1").asText();
                 // msg_cd 값에 따른 로직 처리
                 if ("EGW00123".equals(msgCode)) {
                     System.out.println("토큰 만료: 토큰 재발급 로직 실행");
@@ -159,7 +156,6 @@ public class KISApiServiceImpl implements KISApiService{
                      Thread.sleep(500); // NOTE: 0.5초 대기, 이유: 한국투자증권 초당 요청건수 한계가있어서 어느정도 텀을 주기위해, 0.4초로하면 될때도있고 통과못할때도있기때문에 0.5로
                      // TODO: 한국투자에 공통키로 서버쪽에서 유저가 요청하는만큼 요청해도 초당 요청한계가있어서 에러가 발생 만약 10명만 요청을 한번에 보내도 해당 리밋초과이기 떄문 이에 대한 해결책 강구필요
                  }
-                 System.out.println("here");
              } catch (HttpServerErrorException e) {
                  // 예외로부터 응답 본문(JSON)을 추출
                  String responseBody = e.getResponseBodyAsString();
@@ -172,12 +168,16 @@ public class KISApiServiceImpl implements KISApiService{
 
                      // 특정 값 추출 (예: "msg_cd")
                      String msgCode = jsonNode.get("msg_cd").asText();
-
+                     String msg = jsonNode.get("msg1").asText();
                      // msg_cd 값에 따른 로직 처리
                      if ("EGW00123".equals(msgCode)) {
                          System.out.println("토큰 만료: 토큰 재발급 로직 실행");
                          // 재발급 로직 구현
 //                    getDomesticStockInfo();
+                     } else if ("EGW00201".equals(msgCode)) {
+                         System.out.println("msgCode = " + responseBody);
+//                         Thread.sleep(500); // NOTE: 0.5초 대기, 이유: 한국투자증권 초당 요청건수 한계가있어서 어느정도 텀을 주기위해, 0.4초로하면 될때도있고 통과못할때도있기때문에 0.5로
+//                     return getStockHistoryInfo( fidCondMrktDivCode,  fidInputIscd, fidInputDate1,  fidInputDate2, interval);
                      } else {
                          System.out.println("기타 오류 처리: " + msgCode);
                      }
