@@ -129,8 +129,6 @@ public class KISApiServiceImpl implements KISApiService{
         // 1일별 분봉 조회 로직
         if("MINUTE".equals(interval)){
          while (true){
-             System.out.println("toDateTime  = " + toDateTime);
-             System.out.println("interval = " + interval);
              url= baseUrl + "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice"
                      + "?FID_COND_MRKT_DIV_CODE=" + fidCondMrktDivCode
                      + "&FID_INPUT_ISCD=" + fidInputIscd
@@ -150,14 +148,14 @@ public class KISApiServiceImpl implements KISApiService{
                  // API 호출
                  response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class); // 한투에서 output상위 속성이있어 상위클래스 StockInfoOuput으로 매핑되도록 설정
                  allData.addAll(response.getBody().getStockKisHistoryDto());
-                 System.out.println("allData = " + allData);
+
                  String lastHour = allData.get(allData.size()-1).getStckCntgHour();
-                 System.out.println("lastHour = " + lastHour);
+
                  if(lastHour.compareTo("090000") <= 0){
                      break;
                  } else{
                      toDateTime = lastHour;
-                     System.out.println("toDateTime else = " + toDateTime);
+
                      Thread.sleep(500); // NOTE: 0.5초 대기, 이유: 한국투자증권 초당 요청건수 한계가있어서 어느정도 텀을 주기위해, 0.4초로하면 될때도있고 통과못할때도있기때문에 0.5로
                      // TODO: 한국투자에 공통키로 서버쪽에서 유저가 요청하는만큼 요청해도 초당 요청한계가있어서 에러가 발생 만약 10명만 요청을 한번에 보내도 해당 리밋초과이기 떄문 이에 대한 해결책 강구필요
                  }
