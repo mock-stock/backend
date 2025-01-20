@@ -24,7 +24,7 @@ public class StockDetailServiceImpl implements StockDetailService {
     private final StockRepository stockRepository;
     private final KISApiService kisApiService;
     private final StockValidator stockValidator;
-
+    private final Object apiLock = new Object(); // 동기화를 위한 Lock 객체
     @Override
     public StockInfoDto getStockInfo(String stckCode) {
         Stock stock = stockValidator.getStock(stckCode);
@@ -46,17 +46,13 @@ public class StockDetailServiceImpl implements StockDetailService {
 
 
     @Override
-    public List<StockKisHistoryDto> getStockHistory(String stckCode, LocalDate fromDate, LocalDate toDate, String interval) {
+    public List<StockKisHistoryDto> getStockHistory(String stckCode, LocalDate fromDate, LocalDate toDate, String interval) throws InterruptedException {
 //        Stock stock = stockValidator.getStock(stckCode);
+        synchronized (apiLock){ // NOTE: 배치, 캐싱으로도 파라미터가 다를땐 처리할수없기떄문에 동기화로 단일 쓰레드로 요청사이에 0.5초를 주워 에러발생하지않도록 처리, 하지만 100명이 동시에 요청했다면 0.5*100 =50초 딜레이 발생
+            // API 호출 전 대기 시간 추가 (기존 호출과 겹치지 않도록)
+            Thread.sleep(500);
+            return kisApiService.getStockHistoryInfo("J", stckCode, fromDate, toDate, interval);
+        }
 
-
-
-        return kisApiService.getStockHistoryInfo("J", stckCode, fromDate, toDate, interval);
-//        return result.getStockKisHistoryDto().stream().peek(dto -> {
-//            dto.setStckName(stock.getStckName());
-//            // NOTE: 공식 : 전일대비액(오늘종가 - 어제종가) / 어제종가 * 100 = prdy_vrss(종가차액)/stck_clpr - prdy_vrss(현재종가 - 종가대비 = 어제종가), 어제종가액을 주지않기에 이런식으로 공식만들어 사용
-//            Double changedRate = ((double)dto.getPrdyVrss()/(double)(dto.getStckClpr() - dto.getPrdyVrss())) * 100;
-//            dto.setStckChangeRate(Math.round(changedRate*100)/100.0); // 두자리수만 표시하기위해
-//        }).toList();
     }
 }
