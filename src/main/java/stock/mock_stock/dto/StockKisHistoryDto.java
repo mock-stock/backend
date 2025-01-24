@@ -13,6 +13,9 @@ public class StockKisHistoryDto {
 
     private String stckName;
 
+    @JsonProperty("array_index")
+    private Integer arrayIndex;
+
     @JsonProperty("stck_bsop_date")
     private String stckBsopDate;
 
