@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
@@ -241,7 +242,16 @@ public class KISApiServiceImpl implements KISApiService{
 
 
         if("MINUTE".equals(interval)){ // NOTE : 일별본붕으로 요청한 경우
+            AtomicInteger index = new AtomicInteger(0); // 시작 인덱스
             return allData.stream().peek(dto -> {
+                dto.setArrayIndex(index.getAndIncrement()); // 인덱스 추가 및 증감
+            }).filter(dto -> {
+                if(dto.getArrayIndex() == 0 && dto.getStckCntgHour().compareTo("153000") <= 0){ // 제일 최신 데이터 이고 그값이 15시30분이 아니라면 10분단위로 짜를때 생략될수있으니 이렇게 최신껀 바로 반환
+                    return true;
+                } else {
+                return Integer.parseInt(dto.getStckCntgHour()) % 1000 == 0 && !dto.getStckCntgHour().equals(allData.get(index.get() -1)); // 10분단위값을 보내기위한 연산, KIS에서 중복 시간으로 보낼때도있어서 현재값과 그전 인덱스의 값이 다른거만 보이도록 계산
+                }
+            }).peek(dto -> {
                 dto.setStckName(stock.getStckName());
                 dto.setStckClpr(dto.getStckPrpr()); // 현재가가 종가 마지막가이기떄문에
                 // NOTE: 공식 : 일분봉의 경우 (마지막종가(현재가) - 시작가) / 시작가 * 100 = stck_prpr - stck_oprc/stck_oprc(시작가)
