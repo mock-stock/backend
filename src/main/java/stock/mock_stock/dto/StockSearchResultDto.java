@@ -10,12 +10,12 @@ public class StockSearchResultDto {
     private Long sid;
     private String stckName;
     private String stckCode;
-    private Boolean isWatched;
 
-    public StockSearchResultDto(Long sid, String stckName, String stckCode ,Boolean isWatched){
+
+    public StockSearchResultDto(Long sid, String stckName, String stckCode){
         this.sid = sid;
         this.stckName = stckName;
         this.stckCode = stckCode;
-        this.isWatched = isWatched;
+
     }
 }
