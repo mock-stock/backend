@@ -2,6 +2,7 @@ package stock.mock_stock.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -9,12 +10,15 @@ import lombok.Data;
 public class StockKisDto {
 
     // 실제 KIS에선 String이지만 자동으로 Long, Double등 형식만 맞으면 바꿔준다.
+    @NotNull
     @JsonProperty("stck_prpr")
     private Long stckPrpr;
 
+    @NotNull
     @JsonProperty("prdy_vrss")
     private Long prdyVrss;
 
+    @NotNull
     @JsonProperty("prdy_ctrt")
     private Double prdyCtrt;
     // 기본 생성자
