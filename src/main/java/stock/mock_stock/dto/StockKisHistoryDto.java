@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import lombok.Data;
 
 @Data
@@ -14,15 +16,18 @@ public class StockKisHistoryDto {
     private String stckName;
 
     @JsonProperty("array_index")
+    @Schema(nullable = true)
     private Integer arrayIndex;
 
     @JsonProperty("stck_bsop_date")
     private String stckBsopDate;
 
     @JsonProperty("stck_cntg_hour")
+    @Schema(nullable = true)
     private String stckCntgHour;
 
     @JsonProperty("stck_prpr")
+    @Schema(nullable = true)
     private Long stckPrpr;
 
     @JsonProperty("stck_oprc")
@@ -42,6 +47,7 @@ public class StockKisHistoryDto {
 
 
     @JsonProperty("cntg_vol")
+    @Schema(nullable = true)
     private Long cntgVol;
 
 
