@@ -22,7 +22,7 @@ public class StockSearchServiceImpl implements StockSearchService{
 //        System.out.println("stocks = " + stocks);
         // 검색 결과를 DTO로 변환
         return stocks.stream().map(stock -> {
-            StockSearchResultDto resultDto = new StockSearchResultDto(stock.getSid(),stock.getStckName(),stock.getStckCode() , null ); // TODO: 추후 isWatched 연동하는거 찾아볼것
+            StockSearchResultDto resultDto = new StockSearchResultDto(stock.getSid(),stock.getStckName(),stock.getStckCode()); // TODO: 추후 isWatched 연동하는거 찾아볼것
             return resultDto;
         }).collect(Collectors.toList());
     }
