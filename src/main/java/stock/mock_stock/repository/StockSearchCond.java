@@ -8,7 +8,6 @@ public class StockSearchCond {
     private String searchQuery;
 
     public StockSearchCond(){
-
     }
 
     public StockSearchCond(String searchQuery){
