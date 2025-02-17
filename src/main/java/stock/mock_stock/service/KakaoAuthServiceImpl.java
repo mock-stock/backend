@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import stock.mock_stock.dto.KakaoUserInfo;
+import stock.mock_stock.dto.TokenInfoDto;
 import stock.mock_stock.entity.SocialAccount;
 import stock.mock_stock.entity.User;
 import stock.mock_stock.repository.SocialAccountRepository;
 import stock.mock_stock.repository.UserRepository;
+import stock.mock_stock.security.JwtTokenProvider;
 
 import java.util.Map;
 import java.util.Optional;
@@ -24,10 +26,11 @@ public class KakaoAuthServiceImpl implements KakaoAuthService{
     private final RestTemplate restTemplate;
     private final SocialAccountRepository socialAccountRepository;
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
     @Override
     @Transactional // 유저정보와 소셜계정정보 저장이 각각 있는데 하나라도 실패하면 rollback등 유지하기위해
-    public KakaoUserInfo authenticate(String accessToken) {
-        KakaoUserInfo kakaoUserInfo = getKakaoUserInfo(accessToken);
+    public TokenInfoDto authenticate(String KakaoaccessToken) {
+        KakaoUserInfo kakaoUserInfo = getKakaoUserInfo(KakaoaccessToken);
         System.out.println("kakaoUserInfo = " + kakaoUserInfo);
         Optional<SocialAccount> socialAccount = socialAccountRepository.findByProviderAndProviderUserIdWithUser("kakao", kakaoUserInfo.getId());
 
@@ -65,12 +68,10 @@ public class KakaoAuthServiceImpl implements KakaoAuthService{
         }
 
         // 6️⃣ JWT 발급 후 AuthResponse 생성
-//        String accessToken = jwtTokenProvider.createAccessToken(user.getId());
-//        String refreshToken = jwtTokenProvider.createRefreshToken(user.getId());
-//
-//        return new AuthResponse(accessToken, refreshToken, user);
+        String accessToken = jwtTokenProvider.createAccessToken(user.getUid(), "kakao", user.getEmail(), user.getNickname());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getUid());
 
-        return kakaoUserInfo;
+        return new TokenInfoDto(accessToken, refreshToken);
     }
 
     @Override
