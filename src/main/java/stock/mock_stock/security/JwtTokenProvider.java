@@ -28,6 +28,7 @@ public class JwtTokenProvider {
 
     public String createAccessToken(Long userId, String provider, String email, String nickname) {
         return Jwts.builder()
+                .setHeaderParam("typ", "JWT")
                 .setSubject(String.valueOf(userId))
                 .claim("provider", provider)
                 .claim("email", email)
