@@ -6,7 +6,7 @@ import stock.mock_stock.dto.OAuthToken;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class TokenStorage {
+public class TokenStorage { // NOTE: 오직 KIS를 위한 토큰관리용
     private final ConcurrentHashMap<String, OAuthToken> tokenMap = new ConcurrentHashMap<>();
 
     // 토큰 저장 (key와 만료시간 포함)

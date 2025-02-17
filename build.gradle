@@ -32,6 +32,9 @@ dependencies {
 	implementation 'org.json:json:20240303'
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2' // 버전은 최신으로
 	implementation 'org.springframework.boot:spring-boot-starter-websocket' // websocket의 stomp를 위해 설치
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'  // API 정의
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'  // JWT 생성/검증
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'  // JSON 파싱
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
