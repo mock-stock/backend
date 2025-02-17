@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import stock.mock_stock.dto.KakaoUserInfo;
-import stock.mock_stock.dto.TokenInfoDto;
+import stock.mock_stock.dto.TokenInfo;
 import stock.mock_stock.entity.SocialAccount;
 import stock.mock_stock.entity.User;
 import stock.mock_stock.repository.SocialAccountRepository;
@@ -29,7 +29,7 @@ public class KakaoAuthServiceImpl implements KakaoAuthService{
     private final JwtTokenProvider jwtTokenProvider;
     @Override
     @Transactional // 유저정보와 소셜계정정보 저장이 각각 있는데 하나라도 실패하면 rollback등 유지하기위해
-    public TokenInfoDto authenticate(String KakaoaccessToken) {
+    public TokenInfo authenticate(String KakaoaccessToken) {
         KakaoUserInfo kakaoUserInfo = getKakaoUserInfo(KakaoaccessToken);
         System.out.println("kakaoUserInfo = " + kakaoUserInfo);
         Optional<SocialAccount> socialAccount = socialAccountRepository.findByProviderAndProviderUserIdWithUser("kakao", kakaoUserInfo.getId());
@@ -71,7 +71,7 @@ public class KakaoAuthServiceImpl implements KakaoAuthService{
         String accessToken = jwtTokenProvider.createAccessToken(socialAccount.get().getProviderUserId(), "kakao", user.getEmail(), user.getNickname());
         String refreshToken = jwtTokenProvider.createRefreshToken(socialAccount.get().getProviderUserId());
 
-        return new TokenInfoDto(accessToken, refreshToken);
+        return new TokenInfo(accessToken, refreshToken);
     }
 
     @Override
@@ -99,4 +99,5 @@ public class KakaoAuthServiceImpl implements KakaoAuthService{
                 (String) kakaoAccount.get("email")
         );
     }
+
 }
