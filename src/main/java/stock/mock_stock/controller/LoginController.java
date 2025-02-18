@@ -15,12 +15,12 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/login")
+@RequestMapping("/auth")
 public class LoginController {
     private final KakaoAuthService kakaoAuthService;
     private final LocalAuthService localAuthService;
 
-    @PostMapping("/oauth/kakao")
+    @PostMapping("/login/kakao")
     public ResponseEntity<Object> kakaoLogin(@RequestHeader("Authorization") String authorizationHeader){
         String accessToken = authorizationHeader.replace("Bearer ", "");
         System.out.println("access token = " + accessToken);
@@ -29,7 +29,7 @@ public class LoginController {
         // HttpOnly 쿠키 설정 (refreshToken)
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenInfo.getRefreshToken())
                 .httpOnly(true)  // JavaScript에서 접근 불가
-//                .secure(true)    // HTTPS에서만 전송 (로컬 테스트 시 false)
+                .secure(true)    // HTTPS에서만 전송 (로컬 테스트 시 false)
                 .path("/")       //  쿠키의 유효 경로 설정
                 .maxAge(7 * 24 * 60 * 60) // ✅ 쿠키 유효 기간 설정 (7일)
                 .sameSite("Strict") // ✅ CSRF 방어 (Strict 또는 Lax)
@@ -52,10 +52,10 @@ public class LoginController {
         // HttpOnly 쿠키 설정 (refreshToken)
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenInfo.getRefreshToken())
                 .httpOnly(true)  //  JavaScript에서 접근 불가
-                .secure(false)    // HTTPS에서만 전송 (로컬 테스트 시 false)
+                .secure(true)    // HTTPS에서만 전송 (로컬 테스트 시 false)
                 .path("/")       //  쿠키의 유효 경로 설정
-                .maxAge(7 * 24 * 60 * 60) // ✅ 쿠키 유효 기간 설정 (7일)
-//                .sameSite("Strict") // ✅ CSRF 방어 (Strict 또는 Lax)
+                .maxAge(7 * 24 * 60 * 60) // 쿠키 유효 기간 설정 (7일)
+                .sameSite("None") // CSRF 방어 (Strict 또는 Lax)
                 .build();
 
         Map<String, String> responseBody = new HashMap<>();
@@ -65,6 +65,18 @@ public class LoginController {
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(responseBody);
 
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<Object> refreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
+        if (refreshToken == null) {
+            System.out.println("refreshToken = " + refreshToken);
+            return ResponseEntity.status(401).body("Refresh Token이 없습니다.");
+        }
+        System.out.println("refreshToken = " + refreshToken);
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("refreshToken", refreshToken);
+        return ResponseEntity.ok().body(responseBody);
     }
 
 }
