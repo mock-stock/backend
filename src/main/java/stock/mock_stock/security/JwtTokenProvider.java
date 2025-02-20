@@ -56,10 +56,10 @@ public class JwtTokenProvider {
             return true;
         } catch (ExpiredJwtException e){
             System.out.println("만료된 토큰입니다: " + e.getMessage());
-            return false;
+            throw e;
         } catch (JwtException | IllegalArgumentException e) {
             System.out.println("유효하지 않은 토큰입니다: " + e.getMessage());
-            return false;
+            throw e;
         }
     }
 
