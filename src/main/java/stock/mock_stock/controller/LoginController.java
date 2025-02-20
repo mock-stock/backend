@@ -44,11 +44,8 @@ public class LoginController {
 
     @PostMapping("/test")
     public ResponseEntity<Object> testLogin(@RequestBody TestUserInfo testUserInfo){
-        System.out.println("getEmail = " + testUserInfo.getEmail());
-        System.out.println("getPassword = " + testUserInfo.getPassword());
         TokenInfo tokenInfo = localAuthService.testAuthenticate(testUserInfo);
-        System.out.println("getAccessToken = " + tokenInfo.getAccessToken());
-        System.out.println("getRefreshToken = " + tokenInfo.getRefreshToken());
+
         // HttpOnly 쿠키 설정 (refreshToken)
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenInfo.getRefreshToken())
                 .httpOnly(true)  //  JavaScript에서 접근 불가
@@ -75,6 +72,7 @@ public class LoginController {
         }
         System.out.println("refreshToken = " + refreshToken);
         Map<String, String> responseBody = new HashMap<>();
+
         responseBody.put("refreshToken", refreshToken);
         return ResponseEntity.ok().body(responseBody);
     }
