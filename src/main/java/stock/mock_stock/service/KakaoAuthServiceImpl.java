@@ -68,8 +68,8 @@ public class KakaoAuthServiceImpl implements KakaoAuthService{
         }
 
         // 6️⃣ JWT 발급 후 AuthResponse 생성
-        String accessToken = jwtTokenProvider.createAccessToken(socialAccount.get().getProviderUserId(), "kakao", user.getEmail(), user.getNickname());
-        String refreshToken = jwtTokenProvider.createRefreshToken(socialAccount.get().getProviderUserId());
+        String accessToken = jwtTokenProvider.createAccessToken(user.getUid(), user.getEmail(), user.getNickname(), user.getRole());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getUid());
 
         return new TokenInfo(accessToken, refreshToken);
     }

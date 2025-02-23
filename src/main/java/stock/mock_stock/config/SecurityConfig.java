@@ -25,7 +25,12 @@ private final JwtTokenProvider jwtTokenProvider;
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/stocks/search/history")
                         .authenticated()
-                        .requestMatchers("/stocks/search/*","/auth/test", "/auth/login/*", "/stock/*","/stock/history/*")
+                        .requestMatchers("/stocks/search/*",
+                                "/auth/test",
+                                "/auth/login/*",
+                                "/stock/*",
+                                "/stock/history/*",
+                                "/auth/refresh")
                         .permitAll()
                         .anyRequest()
                         .authenticated())

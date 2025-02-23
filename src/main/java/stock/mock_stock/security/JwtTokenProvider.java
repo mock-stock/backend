@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import stock.mock_stock.entity.Role;
 
 import java.security.Key;
 import java.util.Base64;
@@ -25,13 +26,14 @@ public class JwtTokenProvider {
 //        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String createAccessToken(Long userId, String provider, String email, String nickname) {
+    public String createAccessToken(Long userId, String email, String nickname, Role role) {
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setSubject(String.valueOf(userId))
-                .claim("provider", provider)
+//                .claim("provider", provider) // 불필요정보
                 .claim("email", email)
                 .claim("nickname", nickname) // 추후 권한도 필요다하면 roles 같은거 추가
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -71,4 +73,18 @@ public class JwtTokenProvider {
                 .getBody();
         return Long.parseLong(claims.getSubject());
     }
+
+    private Claims getClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    // JWT 토큰에서 사용자 이름 추출
+    public String getNickname(String token) {
+        return getClaims(token).getSubject(); // subject에 사용자의 이름(또는 ID)을 저장
+    }
+
 }
