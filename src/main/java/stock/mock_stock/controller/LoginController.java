@@ -73,7 +73,6 @@ public class LoginController {
     @PostMapping("/refresh")
     public ResponseEntity<Object> refreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
         if (refreshToken == null) {
-            System.out.println("refreshToken ?= " + refreshToken);
             return ResponseEntity.status(401).body("Refresh Token이 없습니다.");
         }
 
@@ -92,7 +91,6 @@ public class LoginController {
 
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("accessToken", newAccessToken);
-        System.out.println("responseBody = " + responseBody);;
 
         return ResponseEntity.ok().body(responseBody);
     }
