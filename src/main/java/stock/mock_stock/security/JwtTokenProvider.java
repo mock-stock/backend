@@ -69,7 +69,7 @@ public class JwtTokenProvider {
         return Long.parseLong(getClaims(token).getSubject());
     }
 
-    private Claims getClaims(String token) {
+    public Claims getClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(key)
                 .build()
