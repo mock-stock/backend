@@ -31,7 +31,7 @@ public class LocalAuthServiceImpl implements LocalAuthService{
             throw new RuntimeException();
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(user.getUid(), null, user.getEmail(), user.getNickname());
+        String accessToken = jwtTokenProvider.createAccessToken(user.getUid(), user.getEmail(), user.getNickname(), user.getRole());
         String refreshToken = jwtTokenProvider.createRefreshToken(user.getUid());
 
         return new TokenInfo(accessToken, refreshToken);

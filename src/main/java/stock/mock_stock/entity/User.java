@@ -34,6 +34,11 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();  // 엔티티가 수정될 때 변경 필요
 
+    // Role 추가 (EnumType.STRING으로 저장)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.USER; // 기본값은 일반 사용자(USER)
+
     // JPA가 INSERT할 때 자동으로 `createdAt`을 현재 시간으로 설정
     @PrePersist
     protected void onCreate() {
