@@ -1,5 +1,7 @@
 package stock.mock_stock.controller;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -73,13 +75,15 @@ public class LoginController {
     @PostMapping("/refresh")
     public ResponseEntity<Object> refreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
         if (refreshToken == null) {
-            return ResponseEntity.status(401).body("Refresh Token이 없습니다.");
+            System.out.println("refreshToken = " + refreshToken);
+            return ResponseEntity.status(401).body("Not exist refresh token");
         }
+        try{
+            Map<String, String> responseBody = new HashMap<>();
+        if(jwtTokenProvider.validateToken(refreshToken)){
 
-        if (!jwtTokenProvider.validateToken(refreshToken)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh Token이 유효하지 않습니다.");
-        }
         Long userId = jwtTokenProvider.getUserIdFromToken(refreshToken);
+            System.out.println("userId = " + userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found")); // TODP: 리프레시토큰인데도 못찾았을때 어떻게할지 추가
 
@@ -89,10 +93,19 @@ public class LoginController {
                 user.getNickname(),
                 user.getRole());
 
-        Map<String, String> responseBody = new HashMap<>();
         responseBody.put("accessToken", newAccessToken);
+        }
 
         return ResponseEntity.ok().body(responseBody);
+
+        } catch (ExpiredJwtException e) {
+            System.out.println("만료된 토큰입니다: " + e.getMessage() + "claims = " + e.getClaims());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Expired Refresh Token");
+        } catch (JwtException | IllegalArgumentException e) {
+            System.out.println("유효하지않은 토큰입니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Refresh Token");
+        }
+
     }
 
 }
