@@ -54,7 +54,7 @@ public class JwtTokenProvider {
             Jwts.parser()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJws(token + "test");
+                    .parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e){
             System.out.println("만료된 토큰입니다: " + e.getMessage() + "claims = " + e.getClaims());
