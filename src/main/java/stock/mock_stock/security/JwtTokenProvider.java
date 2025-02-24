@@ -57,7 +57,7 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e){
-            System.out.println("만료된 토큰입니다: " + e.getMessage());
+            System.out.println("만료된 토큰입니다: " + e.getMessage() + "claims = " + e.getClaims());
             throw e;
         } catch (JwtException | IllegalArgumentException e) {
             System.out.println("유효하지 않은 토큰입니다: " + e.getMessage());
@@ -66,12 +66,7 @@ public class JwtTokenProvider {
     }
 
     public Long getUserIdFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return Long.parseLong(claims.getSubject());
+        return Long.parseLong(getClaims(token).getSubject());
     }
 
     private Claims getClaims(String token) {
@@ -80,11 +75,6 @@ public class JwtTokenProvider {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-    }
-
-    // JWT 토큰에서 사용자 이름 추출
-    public String getNickname(String token) {
-        return getClaims(token).getSubject(); // subject에 사용자의 이름(또는 ID)을 저장
     }
 
 }
