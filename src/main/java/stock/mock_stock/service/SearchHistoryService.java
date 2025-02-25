@@ -8,5 +8,5 @@ import java.util.List;
 public interface SearchHistoryService {
     public void saveSearchHistory(User user, String searchQuery);
     public List<SearchHistoryProjection> getSearchHistory(Long userId);
-    public void deleteSearchHistory(Long fid);
+    public void deleteSearchHistory(Long fid, Long userId);
 }
