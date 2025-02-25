@@ -52,6 +52,7 @@ public class LoginController {
 
     @PostMapping("/test")
     public ResponseEntity<Object> testLogin(@RequestBody TestUserInfo testUserInfo){
+        try{
         TokenInfo tokenInfo = localAuthService.testAuthenticate(testUserInfo);
 
         // HttpOnly 쿠키 설정 (refreshToken)
@@ -69,6 +70,9 @@ public class LoginController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(responseBody);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
 
     }
 

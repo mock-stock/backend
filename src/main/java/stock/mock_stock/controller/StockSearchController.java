@@ -1,7 +1,10 @@
 package stock.mock_stock.controller;
 
 import io.jsonwebtoken.Claims;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +13,9 @@ import stock.mock_stock.dto.StockSearchResultDto;
 import stock.mock_stock.service.SearchHistoryService;
 import stock.mock_stock.service.StockSearchService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/stocks")
@@ -43,5 +48,18 @@ public class StockSearchController {
         }
         return null;
     }
+
+    @DeleteMapping("/search/history/{fid}")
+    public ResponseEntity<Object> deleteSearchHistory(@PathVariable(value = "fid") Long fid){
+        Map<String, String> response = new HashMap<>();
+
+        try{
+        searchHistoryService.deleteSearchHistory(fid);
+        return ResponseEntity.noContent().build();
+        }catch (EntityNotFoundException e){
+            response.put("message", e.getMessage()); // ✅ 직접 宣言
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        }
 
 }

@@ -29,7 +29,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         // 1. 헤더에서 JWT 추출 (Bearer Token 방식)
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ") && !authorizationHeader.equals("Bearer null")) {
-            System.out.println("authorizationHeader = " + authorizationHeader);
             String token = authorizationHeader.substring(7);
 
             //  2. JWT 유효성 검증

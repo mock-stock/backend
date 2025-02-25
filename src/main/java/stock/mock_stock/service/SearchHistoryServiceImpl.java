@@ -1,5 +1,6 @@
 package stock.mock_stock.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import stock.mock_stock.dto.SearchHistoryProjection;
@@ -30,5 +31,13 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
     public List<SearchHistoryProjection> getSearchHistory(Long userId) {
 
         return searchHistoryRepository.findByUserUidOrderByCreatedAtDescWithRowNumber(userId);
+    }
+
+    @Override
+    public void deleteSearchHistory(Long fid) {
+        if (!searchHistoryRepository.existsById(fid)) {
+            throw new EntityNotFoundException("Search history with ID " + fid + " not found");
+        }
+        searchHistoryRepository.deleteById(fid);
     }
 }

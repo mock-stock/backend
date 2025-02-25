@@ -25,10 +25,8 @@ public class LocalAuthServiceImpl implements LocalAuthService{
         if (existingTestUser.isPresent()) {
             // 기존 User와 새로운 소셜 계정 연결
             user = existingTestUser.get();
-            System.out.println("테스트용 유저: " + user);
         } else {
-            System.out.println("틀린 테스트 정보입니다.");
-            throw new RuntimeException();
+            throw new RuntimeException("Invalid info");
         }
 
         String accessToken = jwtTokenProvider.createAccessToken(user.getUid(), user.getEmail(), user.getNickname(), user.getRole());
