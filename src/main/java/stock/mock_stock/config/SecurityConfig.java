@@ -31,7 +31,9 @@ private final JwtTokenProvider jwtTokenProvider;
                                 "/auth/login/*",
                                 "/stock/*",
                                 "/stock/history/*",
-                                "/auth/refresh")
+                                "/auth/refresh",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
