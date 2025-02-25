@@ -30,8 +30,8 @@ public class LoginController {
 
     @PostMapping("/login/kakao")
     public ResponseEntity<Object> kakaoLogin(@RequestHeader("Authorization") String authorizationHeader){
-        String accessToken = authorizationHeader.replace("Bearer ", "");
-        System.out.println("access token = " + accessToken);
+        // TODO: try catch authorization 값에 있고 없고 로직추가 필요
+        String accessToken = authorizationHeader.substring(7);
         TokenInfo tokenInfo = kakaoAuthService.authenticate(accessToken);
 
         // HttpOnly 쿠키 설정 (refreshToken)
@@ -52,6 +52,7 @@ public class LoginController {
 
     @PostMapping("/test")
     public ResponseEntity<Object> testLogin(@RequestBody TestUserInfo testUserInfo){
+        try{
         TokenInfo tokenInfo = localAuthService.testAuthenticate(testUserInfo);
 
         // HttpOnly 쿠키 설정 (refreshToken)
@@ -69,6 +70,9 @@ public class LoginController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(responseBody);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
 
     }
 
@@ -78,7 +82,7 @@ public class LoginController {
             System.out.println("refreshToken = " + refreshToken);
             return ResponseEntity.status(401).body("Not exist refresh token");
         }
-        try{
+        try{ // TODO: try catch 부분 @ControllerAdvice로 중앙화할것 ExpiredJwtException, JwtException | IllegalArgumentException 등
             Map<String, String> responseBody = new HashMap<>();
         if(jwtTokenProvider.validateToken(refreshToken)){
 
