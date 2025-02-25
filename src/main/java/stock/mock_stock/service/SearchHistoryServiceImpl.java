@@ -2,6 +2,7 @@ package stock.mock_stock.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import stock.mock_stock.dto.SearchHistoryProjection;
 import stock.mock_stock.entity.SearchHistory;
@@ -34,9 +35,12 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
     }
 
     @Override
-    public void deleteSearchHistory(Long fid) {
-        if (!searchHistoryRepository.existsById(fid)) {
-            throw new EntityNotFoundException("Search history with ID " + fid + " not found");
+    public void deleteSearchHistory(Long fid, Long userId) {
+        SearchHistory searchHistory = searchHistoryRepository.findById(fid)
+                .orElseThrow(() -> new EntityNotFoundException("Search history with ID " + fid + " not found"));
+
+        if (!searchHistory.getUser().getUid().equals(userId)) {
+            throw new AccessDeniedException("You are not authorized to delete this search history");
         }
         searchHistoryRepository.deleteById(fid);
     }

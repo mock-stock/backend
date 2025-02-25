@@ -31,7 +31,7 @@ public class StockSearchServiceImpl implements StockSearchService{
 //        System.out.println("stocks = " + stocks);
         // 검색 결과를 DTO로 변환
         return stocks.stream().map(stock -> {
-            StockSearchResultDto resultDto = new StockSearchResultDto(stock.getSid(),stock.getStckName(),stock.getStckCode()); 
+            StockSearchResultDto resultDto = new StockSearchResultDto(stock.getSid(),stock.getStckName(),stock.getStckCode());
             return resultDto;
         }).collect(Collectors.toList());
     }
