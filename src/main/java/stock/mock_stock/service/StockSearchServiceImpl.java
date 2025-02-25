@@ -27,12 +27,11 @@ public class StockSearchServiceImpl implements StockSearchService{
     public List<StockSearchResultDto> searchStocks(String searchQuery) {
         // 레포지토리에서 검색 수행
         List<Stock> stocks = stockRepository.findAllByQuery(searchQuery);
-        // TODO: 검색히스토리 저장, if authenicated
 
 //        System.out.println("stocks = " + stocks);
         // 검색 결과를 DTO로 변환
         return stocks.stream().map(stock -> {
-            StockSearchResultDto resultDto = new StockSearchResultDto(stock.getSid(),stock.getStckName(),stock.getStckCode()); // TODO: 추후 isWatched 연동하는거 찾아볼것
+            StockSearchResultDto resultDto = new StockSearchResultDto(stock.getSid(),stock.getStckName(),stock.getStckCode()); 
             return resultDto;
         }).collect(Collectors.toList());
     }
