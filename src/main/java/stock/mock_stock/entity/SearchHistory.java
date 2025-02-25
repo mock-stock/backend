@@ -1,12 +1,14 @@
 package stock.mock_stock.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "search_history")
 public class SearchHistory {
 
@@ -27,5 +29,12 @@ public class SearchHistory {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    @Builder
+    public SearchHistory(User user, String searchQuery, LocalDateTime createdAt){
+        this.user = user;
+        this.searchQuery = searchQuery;
+        this.createdAt = createdAt;
     }
 }
