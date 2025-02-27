@@ -3,6 +3,7 @@ package stock.mock_stock.integration;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,6 +23,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 //import static org.springframework.http.RequestEntity.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -61,7 +63,31 @@ public class SearchHistoryIntegrationTest {
     }
 
     @Test
-    void getSearchHistory(){
+    void getSearchResult_noNeed_Authorized() throws Exception {
+        mockMvc.perform(get("/stocks/search/삼성"))
+                .andExpect(status().isOk()); // 200 응답 검증
+    }
+
+    @Nested
+    class UnauthorizedTests { // ✅ "401 Unauthorized" 테스트 그룹
+        @Test
+        void getSearchHistory_Failed_Unauthorized() throws Exception {
+            mockMvc.perform(get("/stocks/search/history"))
+                    .andExpect(status().isUnauthorized()); // 401 검증
+        }
+
+        @Test
+        void deleteSearchHistory_Failed_Unauthorized() throws Exception {
+            mockMvc.perform(delete("/stocks/search/history/1"))
+                    .andExpect(status().isUnauthorized()); // 401 검증
+        }
+
+
+    }
+
+
+    @Test
+    void getSearchHistory_Success(){
         List<SearchHistoryProjection> result = searchHistoryService.getSearchHistory(testUser.getUid());
 
         assertEquals(2, result.size());
@@ -108,10 +134,4 @@ public class SearchHistoryIntegrationTest {
         });
     }
 
-    @Test
-    void deleteSearchHistory_Unauthorized() throws Exception {
-        // When & Then: 인증 없이 요청하면 401 발생
-        mockMvc.perform(delete("/stocks/search/history/1")) // JWT 없이 요청
-                .andExpect(status().isUnauthorized()); // 401 검증
-    }
 }
