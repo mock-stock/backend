@@ -38,7 +38,6 @@ class SearchHistoryServiceTest {
         searchHistory = SearchHistory.builder()
                 .user(user)
                 .searchQuery("Test Query")
-                .createdAt(LocalDateTime.now())
                 .build();
     }
 

@@ -32,7 +32,7 @@ public class SearchHistory {
     }
 
     @Builder
-    public SearchHistory(User user, String searchQuery, LocalDateTime createdAt){
+    public SearchHistory(User user, String searchQuery){
         this.user = user;
         this.searchQuery = searchQuery;
 //        this.createdAt = createdAt;
