@@ -32,6 +32,7 @@ public class LoginController {
     public ResponseEntity<Object> kakaoLogin(@RequestHeader("Authorization") String authorizationHeader){
         // TODO: try catch authorization 값에 있고 없고 로직추가 필요
         String accessToken = authorizationHeader.substring(7);
+        System.out.println("accessToken = " + accessToken);
         TokenInfo tokenInfo = kakaoAuthService.authenticate(accessToken);
 
         // HttpOnly 쿠키 설정 (refreshToken)
@@ -53,6 +54,8 @@ public class LoginController {
     @PostMapping("/test")
     public ResponseEntity<Object> testLogin(@RequestBody TestUserInfo testUserInfo){
         try{
+            System.out.println("testUserInfo = " + testUserInfo.getEmail());
+            System.out.println("testUserInfo = " + testUserInfo.getPassword());
         TokenInfo tokenInfo = localAuthService.testAuthenticate(testUserInfo);
 
         // HttpOnly 쿠키 설정 (refreshToken)
