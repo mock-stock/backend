@@ -33,7 +33,8 @@ private final JwtTokenProvider jwtTokenProvider;
                                 "/stock/history/*",
                                 "/auth/refresh",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**")
+                                "/v3/api-docs/**",
+                                "/ws/stocks/**") // 웹소켓
                         .permitAll()
                         .anyRequest()
                         .authenticated())

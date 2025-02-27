@@ -35,6 +35,6 @@ public class SearchHistory {
     public SearchHistory(User user, String searchQuery, LocalDateTime createdAt){
         this.user = user;
         this.searchQuery = searchQuery;
-        this.createdAt = createdAt;
+//        this.createdAt = createdAt;
     }
 }

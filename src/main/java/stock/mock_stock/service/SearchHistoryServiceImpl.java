@@ -22,7 +22,7 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
         SearchHistory searchHistory = SearchHistory.builder()
                 .user(user)
                 .searchQuery(searchQuery)
-                .createdAt(LocalDateTime.now())
+//                .createdAt(LocalDateTime.now())
                 .build();
 
         searchHistoryRepository.save(searchHistory);
