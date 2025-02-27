@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import stock.mock_stock.dto.AuthResponseDto;
 import stock.mock_stock.dto.TestUserInfo;
 import stock.mock_stock.dto.TokenInfo;
 import stock.mock_stock.entity.User;
@@ -29,9 +30,11 @@ public class LoginController {
     private final UserRepository userRepository;
 
     @PostMapping("/login/kakao")
-    public ResponseEntity<Object> kakaoLogin(@RequestHeader("Authorization") String authorizationHeader){
+    public ResponseEntity<AuthResponseDto> kakaoLogin(@RequestHeader("Authorization") String authorizationHeader){
+        System.out.println("authorizationHeader = " + authorizationHeader);
         // TODO: try catch authorization 값에 있고 없고 로직추가 필요
         String accessToken = authorizationHeader.substring(7);
+        System.out.println("accessToken = " + accessToken);
         TokenInfo tokenInfo = kakaoAuthService.authenticate(accessToken);
 
         // HttpOnly 쿠키 설정 (refreshToken)
@@ -42,8 +45,9 @@ public class LoginController {
                 .maxAge(7 * 24 * 60 * 60) // ✅ 쿠키 유효 기간 설정 (7일)
                 .sameSite("None") // CSRF 방어 (Strict 또는 Lax)
                 .build();
-        Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("accessToken", tokenInfo.getAccessToken());
+//        Map<String, String> responseBody = new HashMap<>();
+//        responseBody.put("accessToken", tokenInfo.getAccessToken());
+        AuthResponseDto responseBody = new AuthResponseDto(tokenInfo.getAccessToken());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(responseBody);
@@ -51,8 +55,10 @@ public class LoginController {
     }
 
     @PostMapping("/test")
-    public ResponseEntity<Object> testLogin(@RequestBody TestUserInfo testUserInfo){
+    public ResponseEntity<AuthResponseDto> testLogin(@RequestBody TestUserInfo testUserInfo){
         try{
+            System.out.println("testUserInfo = " + testUserInfo.getEmail());
+            System.out.println("testUserInfo = " + testUserInfo.getPassword());
         TokenInfo tokenInfo = localAuthService.testAuthenticate(testUserInfo);
 
         // HttpOnly 쿠키 설정 (refreshToken)
@@ -64,26 +70,28 @@ public class LoginController {
                 .sameSite("None") // CSRF 방어 (Strict 또는 Lax)
                 .build();
 
-        Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("accessToken", tokenInfo.getAccessToken());
+//        Map<String, String> responseBody = new HashMap<>();
+//        responseBody.put("accessToken", tokenInfo.getAccessToken());
+            AuthResponseDto responseBody = new AuthResponseDto(tokenInfo.getAccessToken());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(responseBody);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<Object> refreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
+    public ResponseEntity<AuthResponseDto> refreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
         if (refreshToken == null) {
             System.out.println("refreshToken = " + refreshToken);
-            return ResponseEntity.status(401).body("Not exist refresh token");
+            return ResponseEntity.status(401).build();
+//                    .body("Not exist refresh token");
         }
         try{ // TODO: try catch 부분 @ControllerAdvice로 중앙화할것 ExpiredJwtException, JwtException | IllegalArgumentException 등
-            Map<String, String> responseBody = new HashMap<>();
+
         if(jwtTokenProvider.validateToken(refreshToken)){
 
         Long userId = jwtTokenProvider.getUserIdFromToken(refreshToken);
@@ -97,19 +105,22 @@ public class LoginController {
                 user.getNickname(),
                 user.getRole());
 
-        responseBody.put("accessToken", newAccessToken);
+//        responseBody.put("accessToken", newAccessToken);
+            AuthResponseDto responseBody = new AuthResponseDto(newAccessToken);
+        return ResponseEntity.ok().body(responseBody);
         }
 
-        return ResponseEntity.ok().body(responseBody);
 
         } catch (ExpiredJwtException e) {
             System.out.println("만료된 토큰입니다: " + e.getMessage() + "claims = " + e.getClaims());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Expired Refresh Token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//                    .body("Expired Refresh Token");
         } catch (JwtException | IllegalArgumentException e) {
             System.out.println("유효하지않은 토큰입니다: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Refresh Token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//                    .body("Invalid Refresh Token");
         }
-
+        return null;
     }
 
 }
