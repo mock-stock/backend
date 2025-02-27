@@ -37,6 +37,7 @@ public class User {
     // Role 추가 (EnumType.STRING으로 저장)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private Role role = Role.USER; // 기본값은 일반 사용자(USER)
 
     // JPA가 INSERT할 때 자동으로 `createdAt`을 현재 시간으로 설정

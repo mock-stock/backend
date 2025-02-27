@@ -21,7 +21,7 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // WebSocket 엔드포인트 등록
         System.out.println("registry = " + registry);
-        registry.addEndpoint("/stocks") // 클라이언트가 연결할 엔드포인트
+        registry.addEndpoint("/ws/stocks") // 클라이언트가 연결할 엔드포인트
                 .setAllowedOriginPatterns("*") // 모든 출처 허용
                 .withSockJS();            // SockJS 폴백 지원, 이걸 빼야 postman에서 되고, 넣어야 브라우저 및 클라이언트코드에서 가능 없을시 에러
 //        ;
