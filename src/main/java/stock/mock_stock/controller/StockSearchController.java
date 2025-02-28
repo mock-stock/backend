@@ -32,7 +32,6 @@ public class StockSearchController {
     @GetMapping("/search/{searchQuery}")
     public List<StockSearchResultDto> searchStocks(@PathVariable(value = "searchQuery") String searchQuery){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("SecurityContextHolder authentication = " + authentication);
         if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof Claims claims) {
             Long userId = Long.valueOf(claims.getSubject());
             return stockSearchService.searchStocksWithHistory(searchQuery, userId);  // userId만 전달
