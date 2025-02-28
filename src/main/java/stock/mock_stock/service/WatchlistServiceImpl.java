@@ -3,10 +3,12 @@ package stock.mock_stock.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import stock.mock_stock.dto.StockInfoDto;
 import stock.mock_stock.dto.WatchlistResponseDto;
+import stock.mock_stock.entity.SearchHistory;
 import stock.mock_stock.entity.Stock;
 import stock.mock_stock.entity.Watchlist;
 import stock.mock_stock.repository.StockRepository;
@@ -65,5 +67,16 @@ public class WatchlistServiceImpl implements WatchlistService{
                 .stckCode(stock.getStckCode())
                 .build();
         watchlistRepository.save(watchlist);
+    }
+
+    @Override
+    public void deleteWatchList(Long uid, Long wid) {
+        Watchlist watchlist = watchlistRepository.findById(wid)
+                .orElseThrow(() -> new EntityNotFoundException("Search history with ID " + wid + " not found"));
+
+        if (!watchlist.getUid().equals(uid)) {
+            throw new AccessDeniedException("You are not authorized to delete this");
+        }
+        watchlistRepository.deleteById(wid);
     }
 }
