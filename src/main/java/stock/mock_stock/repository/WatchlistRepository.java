@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface WatchlistRepository extends JpaRepository<Watchlist, Long> {
     List<Watchlist> findByUid(Long uid);
+    boolean existsByUidAndSid(Long uid, Long sid);
 
 }

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import stock.mock_stock.security.CustomAccessDeniedHandler;
 import stock.mock_stock.security.CustomAuthenticationEntryPoint;
 import stock.mock_stock.security.JwtTokenProvider;
 import stock.mock_stock.security.filter.JwtAuthenticationFilter;
@@ -38,12 +39,10 @@ private final JwtTokenProvider jwtTokenProvider;
                         .permitAll()
                         .anyRequest()
                         .authenticated())
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(customAuthenticationEntryPoint)
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                            response.getWriter().write("{\"error\":\"Unauthorized access - 401\"}");
-                        }))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(customAuthenticationEntryPoint) // 인증 실패(401)만 처리
+                        .accessDeniedHandler(new CustomAccessDeniedHandler()) // 권한 부족(403) 처리
+                )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 //                .addFilterBefore(new JwtRefreshFilter(jwtTokenProvider), JwtAuthenticationFilter.class);
 return http.build();

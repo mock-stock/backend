@@ -6,4 +6,5 @@ import java.util.List;
 public interface WatchlistService {
 
     public List<WatchlistResponseDto> getWatchList(Long uid);
+    public void addWatchlist(Long uid, Long sid);
 }

@@ -1,10 +1,13 @@
 package stock.mock_stock.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 @Entity
 @Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Watchlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
