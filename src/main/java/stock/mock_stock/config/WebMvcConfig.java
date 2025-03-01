@@ -10,7 +10,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("http://localhost:3000", "http://localhost:5500", "https://mock-stock.shop", "https://*.mock-stock.shop")
+                .allowedOriginPatterns("http://localhost:5500"
+//                        , "https://mock-stock.shop", "https://*.mock-stock.shop"
+                )
                 .allowCredentials(true) // Credentials 허용
                 .allowedMethods("OPTIONS", "GET", "POST", "PUT", "DELETE", "")
                 .exposedHeaders("Authorization");
