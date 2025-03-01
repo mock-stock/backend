@@ -13,12 +13,12 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long acid;
 
-    @Column(name = "uid", nullable = false, unique = true) // 외래키 직접 관리
+    @Column(name = "uid", nullable = false, insertable = false, updatable = false) // 외래키 직접 관리
     private Long uid;
 
     private Long balance;
 
     @OneToOne
-    @JoinColumn(name = "uid", insertable = false, updatable = false)  // User를 직접 참조하지 않고 uid로 관리
+    @JoinColumn(name = "uid")  // User를 직접 참조하지 않고 uid로 관리
     private User user;
 }
