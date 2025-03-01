@@ -23,6 +23,6 @@ public class Watchlist {
     private String stckCode;
 
     @ManyToOne(fetch = FetchType.LAZY)  // 🔥 User 엔티티와 ManyToOne 관계 추가
-    @JoinColumn(name = "uid", nullable = false)  // uid 컬럼이 외래키 역할
+    @JoinColumn(name = "uid",  insertable = false, updatable = false)  // uid 컬럼이 외래키 역할
     private User user;
 }

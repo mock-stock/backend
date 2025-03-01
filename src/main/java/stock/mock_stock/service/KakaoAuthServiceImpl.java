@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import stock.mock_stock.dto.KakaoUserInfo;
 import stock.mock_stock.dto.TokenInfo;
+import stock.mock_stock.entity.Account;
 import stock.mock_stock.entity.SocialAccount;
 import stock.mock_stock.entity.User;
+import stock.mock_stock.repository.AccountRepository;
 import stock.mock_stock.repository.SocialAccountRepository;
 import stock.mock_stock.repository.UserRepository;
 import stock.mock_stock.security.JwtTokenProvider;
@@ -27,6 +29,7 @@ public class KakaoAuthServiceImpl implements KakaoAuthService{
     private final SocialAccountRepository socialAccountRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AccountRepository accountRepository;
     @Override
     @Transactional // 유저정보와 소셜계정정보 저장이 각각 있는데 하나라도 실패하면 rollback등 유지하기위해
     public TokenInfo authenticate(String KakaoaccessToken) {
@@ -65,6 +68,14 @@ public class KakaoAuthServiceImpl implements KakaoAuthService{
                     .build();
             socialAccountRepository.save(newSocialAccount);
             System.out.println("소셜 계정 등록 완료: " + newSocialAccount);
+
+            Account account = Account.builder()
+                    .user(user)  // User와 연결
+                    .balance(0L) // 초기 잔액 설정 (예시)
+                    .build();
+            accountRepository.save(account); // ✅ Account 저장
+            System.out.println("신규 계좌 등록 완료: " + account);
+
         }
 
         // 6️⃣ JWT 발급 후 AuthResponse 생성

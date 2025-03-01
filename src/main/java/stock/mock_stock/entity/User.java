@@ -47,6 +47,10 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SocialAccount> socialAccounts = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "acid", nullable = false)
+    private Account account;  //
+
     // JPA가 INSERT할 때 자동으로 `createdAt`을 현재 시간으로 설정
     @PrePersist
     protected void onCreate() {
