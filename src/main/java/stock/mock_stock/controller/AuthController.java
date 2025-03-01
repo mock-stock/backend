@@ -1,5 +1,6 @@
 package stock.mock_stock.controller;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
@@ -7,27 +8,31 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import stock.mock_stock.dto.AuthResponseDto;
 import stock.mock_stock.dto.TestUserInfo;
 import stock.mock_stock.dto.TokenInfo;
+import stock.mock_stock.dto.UserResponseDto;
 import stock.mock_stock.entity.User;
 import stock.mock_stock.repository.UserRepository;
 import stock.mock_stock.security.JwtTokenProvider;
 import stock.mock_stock.service.KakaoAuthService;
 import stock.mock_stock.service.LocalAuthService;
+import stock.mock_stock.service.UserService;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-public class LoginController {
+public class AuthController {
     private final KakaoAuthService kakaoAuthService;
     private final LocalAuthService localAuthService;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @PostMapping("/login/kakao")
     public ResponseEntity<AuthResponseDto> kakaoLogin(@RequestHeader("Authorization") String authorizationHeader){
@@ -119,6 +124,18 @@ public class LoginController {
             System.out.println("유효하지않은 토큰입니다: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 //                    .body("Invalid Refresh Token");
+        }
+        return null;
+    }
+
+    @GetMapping("/me")
+    public UserResponseDto getMe(){
+        System.out.println("here me");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof Claims claims) {
+            Long userId = Long.valueOf(claims.getSubject());
+            System.out.println("userId = " + userId);
+            return userService.getUserWithWatchlist(userId);
         }
         return null;
     }

@@ -40,6 +40,13 @@ public class User {
     @Builder.Default
     private Role role = Role.USER; // 기본값은 일반 사용자(USER)
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Watchlist> watchlist = new ArrayList<>();
+
+    // User와 SocialAccount 간의 관계 (1:N)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SocialAccount> socialAccounts = new ArrayList<>();
+
     // JPA가 INSERT할 때 자동으로 `createdAt`을 현재 시간으로 설정
     @PrePersist
     protected void onCreate() {
@@ -53,7 +60,4 @@ public class User {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // User와 SocialAccount 간의 관계 (1:N)
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SocialAccount> socialAccounts = new ArrayList<>();
 }
