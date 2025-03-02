@@ -17,8 +17,9 @@ public class Account {
     @JoinColumn(name = "uid")  // User를 직접 참조하지 않고 uid로 관리
     private User user;
 
-    @Column(columnDefinition = "BIGINT DEFAULT 0")  // DB에서 기본값 0 설정
-    private Long balance;
+    @Column(columnDefinition = "BIGINT DEFAULT 0")  // 테이블 만들때 DB에서 기본값 0 설정
+    @Builder.Default
+    private Long balance = 0L;
 
 
 }
