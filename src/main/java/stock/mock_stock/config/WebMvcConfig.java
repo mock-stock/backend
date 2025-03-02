@@ -16,7 +16,5 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowCredentials(true) // Credentials 허용
                 .allowedMethods("OPTIONS", "GET", "POST", "PUT", "DELETE", "")
                 .exposedHeaders("Authorization");
-
-
     }
 }
