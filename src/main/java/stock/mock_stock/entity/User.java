@@ -41,14 +41,20 @@ public class User {
     private Role role = Role.USER; // 기본값은 일반 사용자(USER)
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Watchlist> watchlist = new ArrayList<>();
 
     // User와 SocialAccount 간의 관계 (1:N)
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<SocialAccount> socialAccounts = new ArrayList<>();
 
+    public void addSocialAccount(SocialAccount socialAccount) {
+        this.socialAccounts.add(socialAccount);
+        socialAccount.setUser(this); // 🔥 FK 자동 설정
+    }
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "acid", nullable = false)
     private Account account;  //
 
     // JPA가 INSERT할 때 자동으로 `createdAt`을 현재 시간으로 설정

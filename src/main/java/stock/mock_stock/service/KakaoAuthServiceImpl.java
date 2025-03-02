@@ -49,32 +49,41 @@ public class KakaoAuthServiceImpl implements KakaoAuthService{
             if (existingUser.isPresent()) {
                 // 기존 User와 새로운 소셜 계정 연결
                 user = existingUser.get();
-                System.out.println("기존 회원이 존재하여 소셜 계정 추가: " + user);
+                System.out.println("기존 회원 email이 존재하여 소셜 계정 추가: " + user);
+
+                SocialAccount newSocialAccount = SocialAccount.builder()
+                        .user(user)  // 기존 User에 연결
+                        .provider("kakao")
+                        .providerUserId(kakaoUserInfo.getId())
+                        .build();
+                user.addSocialAccount(newSocialAccount);
+                System.out.println("새로추가할 소셜 계정 = " + newSocialAccount);
             } else {
                 // 새로운 회원 생성
                 user = User.builder()
                         .email(kakaoUserInfo.getEmail())
                         .nickname(kakaoUserInfo.getNickname())
                         .build();
+
+                Account account = Account.builder()
+                        .user(user)  // User와 연결
+                        .build();
+                user.setAccount(account); // 🔥 Account를 User에 연결
+
+                // 새로운 SocialAccount 저장
+                SocialAccount newSocialAccount = SocialAccount.builder()
+                        .user(user)  // 기존 or 신규 User와 연결
+                        .provider("kakao")
+                        .providerUserId(kakaoUserInfo.getId())
+                        .build();
+                user.addSocialAccount(newSocialAccount);
+
+
+            }
                 userRepository.save(user);
                 System.out.println("신규 회원 등록 완료: " + user);
-            }
-
-            // 새로운 SocialAccount 저장
-            SocialAccount newSocialAccount = SocialAccount.builder()
-                    .user(user)  // 기존 or 신규 User와 연결
-                    .provider("kakao")
-                    .providerUserId(kakaoUserInfo.getId())
-                    .build();
-            socialAccountRepository.save(newSocialAccount);
-            System.out.println("소셜 계정 등록 완료: " + newSocialAccount);
-
-            Account account = Account.builder()
-                    .user(user)  // User와 연결
-                    .balance(0L) // 초기 잔액 설정 (예시)
-                    .build();
-            accountRepository.save(account); // ✅ Account 저장
-            System.out.println("신규 계좌 등록 완료: " + account);
+                System.out.println("신규 계좌 등록 완료: " + user.getAccount());
+                System.out.println("소셜 계정 등록 완료: " + user.getSocialAccounts());
 
         }
 
