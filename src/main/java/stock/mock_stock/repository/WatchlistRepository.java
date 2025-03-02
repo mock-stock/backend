@@ -6,7 +6,7 @@ import stock.mock_stock.entity.Watchlist;
 import java.util.List;
 
 public interface WatchlistRepository extends JpaRepository<Watchlist, Long> {
-    List<Watchlist> findByUid(Long uid);
-    boolean existsByUidAndSid(Long uid, Long sid);
+    List<Watchlist> findByUserUid(Long uid);
+    boolean existsByUserUidAndSid(Long uid, Long sid);
 
 }
