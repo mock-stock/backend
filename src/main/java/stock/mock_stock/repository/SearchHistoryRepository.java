@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Long> {
     //  특정 사용자의 모든 검색 내역 조회 (최신순으로 정렬)
+    // TODO: 이부분 with 부분이랑 join user부분 필요없을시 제거하고 가져오도록 수정
     @Query(value = """ 
     WITH LatestSearch AS (
         SELECT 
