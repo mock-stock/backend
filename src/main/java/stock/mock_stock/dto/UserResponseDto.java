@@ -19,11 +19,7 @@ public class UserResponseDto {
         this.email = email;
         this.watchlist = watchlist;
     }
-
-    public Long getUserId() { return userId; }
-    public String getNickname() { return nickname; }
-    public String getEmail() { return email; }
-    public List<UserWatchlistResponseDto> getWatchlist() { return watchlist; }
+    
 }
 
 

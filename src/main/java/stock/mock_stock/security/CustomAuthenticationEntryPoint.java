@@ -19,6 +19,16 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
 
+        // 🔹 서버 내부 오류(500)인지 확인
+        Throwable cause = authException.getCause();
+        if (cause instanceof RuntimeException) {  // 내부에서 발생한 서버 오류라면 500 반환
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write("{\"error\":\"Internal Server Error\", \"message\":\"서버 내부 오류가 발생했습니다.\"}");
+            return;
+        }
+
+
         // ✅ 401 상태 코드 설정
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 

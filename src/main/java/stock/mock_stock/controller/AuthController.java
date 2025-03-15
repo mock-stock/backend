@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import stock.mock_stock.dto.AuthResponseDto;
 import stock.mock_stock.dto.TestUserInfo;
 import stock.mock_stock.dto.TokenInfo;
@@ -130,14 +131,12 @@ public class AuthController {
 
     @GetMapping("/me")
     public UserResponseDto getMe(){
-        System.out.println("here me");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof Claims claims) {
             Long userId = Long.valueOf(claims.getSubject());
-            System.out.println("userId = " + userId);
             return userService.getUserWithWatchlist(userId);
         }
-        return null;
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated"); // 401 반환
     }
 
 }
