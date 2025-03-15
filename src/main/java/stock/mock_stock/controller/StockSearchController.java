@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import stock.mock_stock.dto.SearchHistoryProjection;
 import stock.mock_stock.dto.StockSearchResultDto;
 import stock.mock_stock.entity.User;
@@ -56,21 +57,12 @@ public class StockSearchController {
         Map<String, String> response = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-
-        try{
             if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof Claims claims) {
                 Long userId = Long.valueOf(claims.getSubject());
                 searchHistoryService.deleteSearchHistory(fid, userId);
                 return ResponseEntity.noContent().build();
             }
-        }catch (EntityNotFoundException e){
-            response.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        } catch (AccessDeniedException e) {
-            response.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response); // 403 Forbidden
-        }
-         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid");
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated"); // 401 반환
         }
 
 }

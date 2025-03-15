@@ -46,19 +46,12 @@ public class WatchlistController {
             Map<String, String> response = new HashMap<>();
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            try{
                 if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof Claims claims) {
                     Long userId = Long.valueOf(claims.getSubject());
                     watchlistService.deleteWatchList(userId, wid);
                     return ResponseEntity.noContent().build();
                 }
-            }catch (EntityNotFoundException e){
-                response.put("message", e.getMessage());
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-            } catch (AccessDeniedException e) {
-                response.put("message", e.getMessage());
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response); // 403 Forbidden
-            }
+
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid");
 
         }

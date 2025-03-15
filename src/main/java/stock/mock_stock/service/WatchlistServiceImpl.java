@@ -80,7 +80,7 @@ public class WatchlistServiceImpl implements WatchlistService{
                 .orElseThrow(() -> new EntityNotFoundException("Search history with ID " + wid + " not found"));
 
         if (!watchlist.getUser().getUid().equals(uid)) {
-            throw new AccessDeniedException("You are not authorized to delete this");
+            throw new AccessDeniedException("You are not authorized to delete this2");
         }
         watchlistRepository.deleteById(wid);
     }
