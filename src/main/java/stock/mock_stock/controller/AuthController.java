@@ -131,11 +131,9 @@ public class AuthController {
 
     @GetMapping("/me")
     public UserResponseDto getMe(){
-        System.out.println("here me");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof Claims claims) {
             Long userId = Long.valueOf(claims.getSubject());
-            System.out.println("userId = " + userId);
             return userService.getUserWithWatchlist(userId);
         }
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated"); // 401 반환
