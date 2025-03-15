@@ -8,7 +8,6 @@ import stock.mock_stock.dto.StockInfoDto;
 import stock.mock_stock.dto.StockInfoOutput;
 import stock.mock_stock.dto.StockKisHistoryDto;
 import stock.mock_stock.entity.Stock;
-import stock.mock_stock.exception.InvalidStockCodeException;
 import stock.mock_stock.repository.StockRepository;
 
 import java.time.LocalDate;

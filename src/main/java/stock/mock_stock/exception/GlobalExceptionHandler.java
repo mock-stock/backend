@@ -15,10 +15,10 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(InvalidStockCodeException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400 상태 코드
-    public ErrorResult handleInvalidStockCodeException(InvalidStockCodeException e){
-        return new ErrorResult(HttpStatus.BAD_REQUEST.value(), "Bad Request" ,e.getMessage());
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResult> handleIllegalArgumentException(IllegalArgumentException e) {
+        ErrorResult errorResult = new ErrorResult(HttpStatus.BAD_REQUEST.value(), "Bad Request", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
