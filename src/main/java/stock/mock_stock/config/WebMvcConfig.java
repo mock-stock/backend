@@ -12,11 +12,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOriginPatterns("http://localhost:5500",
                 "http://localhost:3000",
-                "https://mock-stock-frontend.vercel.app"
+                "https://mock-stock-frontend.vercel.app",
+                "https://dev-mock-stock-frontend.vercel.app"
 //                        , "https://mock-stock.shop", "https://*.mock-stock.shop"
                 )
                 .allowCredentials(true) // Credentials 허용
-                .allowedMethods("OPTIONS", "GET", "POST", "PUT", "DELETE", "")
-                .exposedHeaders("Authorization");
+                .allowedMethods("OPTIONS", "GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*")
+                .exposedHeaders("Authorization", "Set-cookie");
     }
 }
