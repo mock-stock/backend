@@ -17,7 +17,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 //                        , "https://mock-stock.shop", "https://*.mock-stock.shop"
                 )
                 .allowCredentials(true) // Credentials 허용
-                .allowedMethods("OPTIONS", "GET", "POST", "PUT", "DELETE", "")
-                .exposedHeaders("Authorization");
+                .allowedMethods("OPTIONS", "GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*")
+                .exposedHeaders("Authorization", "Set-cookie");
     }
 }
