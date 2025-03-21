@@ -18,7 +18,7 @@ public class OrderTransaction {
     private Long otid;
 
     @OneToOne
-    @JoinColumn(name = "oid")
+    @JoinColumn(name = "oid", nullable = false)
     private Order order;
 
     @Column(nullable = false)

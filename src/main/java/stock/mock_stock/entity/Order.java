@@ -3,7 +3,6 @@ package stock.mock_stock.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -40,7 +39,7 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private OrderStatus orderStatus; // NEW, PENDING, COMPLETED, CANCELED
+    private OrderStatus orderStatus; // PENDING, FILLED, CANCELED
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

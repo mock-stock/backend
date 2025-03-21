@@ -24,7 +24,7 @@ public class AccountServiceImpl implements AccountService{
     @Override
     public AccountResponseDto getAccount(Long uid) {
 
-        Account account = accountRepository.findByUserUid(uid)
+        Account account = accountRepository.findWithUserByUid(uid)
                 .orElseThrow(()-> new EntityNotFoundException("account with id "+ uid+ " not found"));
 
         if (!account.getUser().getUid().equals(uid)) {
