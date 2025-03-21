@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "orders")
 public class Order {
@@ -21,11 +23,11 @@ public class Order {
     private User user;
 
     @Column(nullable = false)
-    private String stockCode; // 주식 종목 코드
+    private String stckCode; // 주식 종목 코드
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private OrderType orderType; // 매수(BUY) or 매도(SELL)
+    private OrderType orderType; // 지정가(LIMIT) or 시장가(MARKET)
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -58,14 +60,4 @@ public class Order {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @Builder
-    public Order(User user, String stockCode, OrderType orderType, TradeActionType tradeAction, Long stckOrdQty, Long stckOrdUnitPrice, OrderStatus orderStatus) {
-        this.user = user;
-        this.stockCode = stockCode;
-        this.orderType = orderType;
-        this.tradeAction = tradeAction;
-        this.stckOrdQty = stckOrdQty;
-        this.stckOrdUnitPrice = stckOrdUnitPrice;
-        this.orderStatus = orderStatus;
-    }
 }

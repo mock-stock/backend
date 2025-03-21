@@ -14,7 +14,6 @@ import stock.mock_stock.service.AccountService;
 
 
 @RestController
-
 @RequiredArgsConstructor
 public class AccountController {
 

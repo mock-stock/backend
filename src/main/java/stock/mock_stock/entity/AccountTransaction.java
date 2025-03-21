@@ -1,12 +1,17 @@
 package stock.mock_stock.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AccountTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

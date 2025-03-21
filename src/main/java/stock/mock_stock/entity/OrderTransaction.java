@@ -1,6 +1,7 @@
 package stock.mock_stock.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -10,8 +11,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,9 +21,6 @@ public class OrderTransaction {
     @OneToOne
     @JoinColumn(name = "oid", nullable = false)
     private Order order;
-
-    @Column(nullable = false)
-    private OrderStatus orderStatus;
 
     @Column(nullable = false)
     private Long stckExecUnitPrice;

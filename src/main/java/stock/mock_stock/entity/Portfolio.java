@@ -1,8 +1,7 @@
 package stock.mock_stock.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,6 +9,8 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Portfolio {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,9 +25,6 @@ public class Portfolio {
 
     @Column(nullable = false)
     private Long stckQty;
-
-    @Column(nullable = false)
-    private Long totalInitialAmount;
 
     @Column(nullable = false)
     private BigDecimal avgPurchasePrice;

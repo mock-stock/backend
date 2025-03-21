@@ -19,23 +19,23 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final PortfolioRepository portfolioRepository;
     private final AccountRepository accountRepository;
-    private final TransitionRepository transitionRepository;
     private final OrderTransactionRepository orderTransactionRepository;
     private final UserRepository userRepository;
 
     @Override
     @Transactional
-    public void processOrder(Long userId, String stockCode, Long quantity, Long price, OrderType orderType, TradeActionType tradeActionType) {
+    public void processOrder(Long userId, String stockCode, Long orderQuantity, Long unitPrice, OrderType orderType, TradeActionType tradeActionType) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         // NOTE: 주문 기록
         Order order = Order.builder()
                 .user(user)
-                .stockCode(stockCode)
-                .stckOrdQty(quantity)
-                .stckOrdUnitPrice(price)
+                .stckCode(stockCode)
+                .stckOrdQty(orderQuantity)
+                .stckOrdUnitPrice(unitPrice)
                 .orderType(orderType)
+                .tradeAction(tradeActionType)
                 .orderStatus(OrderStatus.PENDING) // 주문 초기 상태
                 .build();
         orderRepository.save(order); // 새 엔티티는 INSERT 실행 필요
@@ -45,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
 
         // NOTE: 계좌 잔액 차감 (매수 시)
         if (tradeActionType == TradeActionType.BUY) {
-            BigDecimal totalCost = BigDecimal.valueOf(price).multiply(BigDecimal.valueOf(quantity));
+            BigDecimal totalCost = BigDecimal.valueOf(unitPrice).multiply(BigDecimal.valueOf(orderQuantity));
 
             if (BigDecimal.valueOf(account.getBalance()).compareTo(totalCost) < 0) {
                 throw new IllegalArgumentException("잔액 부족");
@@ -57,26 +57,21 @@ public class OrderServiceImpl implements OrderService {
             accountService.recordTransaction(account, -totalCost.longValue(), TransactionType.WITHDRAWAL);
 
             // NOTE: Portfolio 업데이트
-            updatePortfolio(user, stockCode, quantity, price, tradeActionType);
+            updatePortfolio(user, stockCode, orderQuantity, unitPrice, tradeActionType);
 
-        }  else if (tradeActionType == TradeActionType.SELL) {
-            BigDecimal totalCost = BigDecimal.valueOf(price).multiply(BigDecimal.valueOf(quantity));
+        } else if (tradeActionType == TradeActionType.SELL) {
+            BigDecimal totalAmount = BigDecimal.valueOf(unitPrice).multiply(BigDecimal.valueOf(orderQuantity));
             // NOTE: Portfolio 업데이트
-            updatePortfolio(user, stockCode, quantity, price, tradeActionType);
+            updatePortfolio(user, stockCode, orderQuantity, unitPrice, tradeActionType);
             // NOTE: 계좌에 금액 추가 (매도 후 잔액 증가)
-            BigDecimal updatedBalance = BigDecimal.valueOf(account.getBalance()).add(totalCost);
-            account.setBalance(totalCost.longValue());
-            accountService.recordTransaction(account, updatedBalance.longValue(), TransactionType.DEPOSIT);
+            BigDecimal updatedBalance = BigDecimal.valueOf(account.getBalance()).add(totalAmount);
+            account.setBalance(updatedBalance.longValue());
+            accountService.recordTransaction(account, totalAmount.longValue(), TransactionType.DEPOSIT);
         }
 
-
-
-        // NOTE: 주문 체결 완료 처리
-        order.setOrderStatus(OrderStatus.FILLED); // 이때 Dirty checking 적용됨, @Transactional 있다는 가정하에
+        order.setOrderStatus(OrderStatus.FILLED); // NOTE: 주문 체결 완료 처리, 이때 Dirty checking 적용됨, @Transactional 있다는 가정하에
 //        orderRepository.save(order);  // Dirty checking 으로 필요없음
-
-        // NOTE: `OrderTransaction` 저장
-        saveOrderTransaction(order);
+        saveOrderTransaction(order);    // NOTE: 체결완료시 주문체결 저장
     }
 
     private void saveOrderTransaction(Order order) {
@@ -93,14 +88,14 @@ public class OrderServiceImpl implements OrderService {
     /**
      *  `Portfolio` 업데이트 (보유 주식 정보 반영), 오직 주문 처리의 일부, 재사용성 아직없음, 추후 필요시 분리
      */
-    private void updatePortfolio(User user, String stockCode, Long quantity, Long price, TradeActionType tradeActionType) {
+    private void updatePortfolio(User user, String stockCode, Long orderQuantity, Long unitPrice, TradeActionType tradeActionType) {
         Optional<Portfolio> existingPortfolio = portfolioRepository.findByUserAndStckCode(user, stockCode);
 
         if (tradeActionType == TradeActionType.BUY) {
             if (existingPortfolio.isPresent()) {
                 Portfolio portfolio = existingPortfolio.get();
-                Long newStockQty = portfolio.getStckQty() + quantity;
-                BigDecimal newAvgPrice = calculateNewAveragePrice(portfolio, quantity, price);
+                Long newStockQty = portfolio.getStckQty() + orderQuantity;
+                BigDecimal newAvgPrice = calculateNewAveragePrice(portfolio, orderQuantity, unitPrice);
                 portfolio.setStckCode(stockCode);
                 portfolio.setStckQty(newStockQty);
                 portfolio.setAvgPurchasePrice(newAvgPrice);
@@ -110,20 +105,20 @@ public class OrderServiceImpl implements OrderService {
                 Portfolio newPortfolio = Portfolio.builder()
                         .user(user)
                         .stckCode(stockCode)
-                        .stckQty(quantity)
-                        .avgPurchasePrice(BigDecimal.valueOf(price))
+                        .stckQty(orderQuantity)
+                        .avgPurchasePrice(BigDecimal.valueOf(unitPrice))
                         .build();
                 portfolioRepository.save(newPortfolio);  // NOTE: 새 엔티티는 INSERT 실행 필요
             }
         } else if (tradeActionType == TradeActionType.SELL) {
             if (existingPortfolio.isPresent()) {
                 Portfolio portfolio = existingPortfolio.get();
-                if (portfolio.getStckQty() < quantity) {
+                if (portfolio.getStckQty() < orderQuantity) {
                     throw new IllegalArgumentException("Not enough stocks to sell");
                 }
 
                 //  보유 주식 수량 감소
-                portfolio.setStckQty(portfolio.getStckQty() - quantity);
+                portfolio.setStckQty(portfolio.getStckQty() - orderQuantity);
 
                 //  보유 주식이 0개가 되면 삭제
                 if (portfolio.getStckQty() == 0) {
