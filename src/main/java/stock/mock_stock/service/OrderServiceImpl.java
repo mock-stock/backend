@@ -15,9 +15,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
+    private final AccountService accountService;
     private final OrderRepository orderRepository;
     private final PortfolioRepository portfolioRepository;
     private final AccountRepository accountRepository;
+    private final TransitionRepository transitionRepository;
     private final OrderTransactionRepository orderTransactionRepository;
     private final UserRepository userRepository;
 
@@ -52,16 +54,19 @@ public class OrderServiceImpl implements OrderService {
             account.setBalance(updatedBalance.longValue()); // 이때 Dirty checking 적용됨, @Transactional 있다는 가정하에
 //            accountRepository.save(account); // Dirty checking 으로 필요없음
 
+            accountService.recordTransaction(account, -totalCost.longValue(), TransactionType.WITHDRAWAL);
+
             // NOTE: Portfolio 업데이트
             updatePortfolio(user, stockCode, quantity, price, tradeActionType);
 
         }  else if (tradeActionType == TradeActionType.SELL) {
-            BigDecimal totalRevenue = BigDecimal.valueOf(price).multiply(BigDecimal.valueOf(quantity));
+            BigDecimal totalCost = BigDecimal.valueOf(price).multiply(BigDecimal.valueOf(quantity));
             // NOTE: Portfolio 업데이트
             updatePortfolio(user, stockCode, quantity, price, tradeActionType);
             // NOTE: 계좌에 금액 추가 (매도 후 잔액 증가)
-            BigDecimal updatedBalance = BigDecimal.valueOf(account.getBalance()).add(totalRevenue);
-            account.setBalance(updatedBalance.longValue());
+            BigDecimal updatedBalance = BigDecimal.valueOf(account.getBalance()).add(totalCost);
+            account.setBalance(totalCost.longValue());
+            accountService.recordTransaction(account, updatedBalance.longValue(), TransactionType.DEPOSIT);
         }
 
 
@@ -84,8 +89,9 @@ public class OrderServiceImpl implements OrderService {
         orderTransactionRepository.save(transaction); // NOTE: 새 엔티티는 INSERT 실행 필요
     }
 
+
     /**
-     *  `Portfolio` 업데이트 (보유 주식 정보 반영)
+     *  `Portfolio` 업데이트 (보유 주식 정보 반영), 오직 주문 처리의 일부, 재사용성 아직없음, 추후 필요시 분리
      */
     private void updatePortfolio(User user, String stockCode, Long quantity, Long price, TradeActionType tradeActionType) {
         Optional<Portfolio> existingPortfolio = portfolioRepository.findByUserAndStckCode(user, stockCode);

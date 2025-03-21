@@ -63,7 +63,17 @@ public class AccountServiceImpl implements AccountService{
 
         //잔액 업데이트
         account.setBalance(account.getBalance() + amount);
-        accountRepository.save(account);
+//        accountRepository.save(account); // NOTE: Dirty Checking wjrdyd
 
+    }
+
+    @Override
+    public void recordTransaction(Account account, Long amount, TransactionType type) {
+        AccountTransaction accountTransaction = AccountTransaction.builder()
+                .account(account)
+                .amount(amount)
+                .transactionType(type)
+                .build();
+        transitionRepository.save(accountTransaction);
     }
 }
