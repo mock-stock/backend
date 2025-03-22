@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stock.mock_stock.dto.StockInfoDto;
 import stock.mock_stock.entity.*;
 import stock.mock_stock.repository.*;
 
@@ -21,12 +22,18 @@ public class OrderServiceImpl implements OrderService {
     private final AccountRepository accountRepository;
     private final OrderTransactionRepository orderTransactionRepository;
     private final UserRepository userRepository;
+    private final StockDetailService stockDetailService;
 
     @Override
     @Transactional
     public void processOrder(Long userId, String stockCode, Long orderQuantity, Long unitPrice, OrderType orderType, TradeActionType tradeActionType) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // NOTE: 해당 시세 조회
+        if(orderType == OrderType.MARKET){
+                unitPrice = stockDetailService.getStockInfo(stockCode).getStckCurPrice();
+        }
 
         // NOTE: 주문 기록
         Order order = Order.builder()

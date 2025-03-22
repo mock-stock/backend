@@ -23,19 +23,17 @@ public class OrderController {
         System.out.println("OrderController.buyStock");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof Claims claims) {
-            System.out.println("inside.buyStock");
             Long userId = Long.valueOf(claims.getSubject());
+            orderService.processOrder(userId,
+                    orderRequestDto.getStckCode(),
+                    orderRequestDto.getQuantity(),
+                    orderRequestDto.getPrice(),
+                    orderRequestDto.getOrderType(),
+                    TradeActionType.BUY);
 
-             orderService.processOrder(userId,
-                     orderRequestDto.getStckCode(),
-                     orderRequestDto.getQuantity(),
-                     orderRequestDto.getPrice(),
-                     orderRequestDto.getOrderType(),
-                     TradeActionType.BUY);
 
-       return ResponseEntity.ok().build();
+            return ResponseEntity.ok().build();
         }
-        System.out.println("outside");
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated"); // 401 반환
     }
 
