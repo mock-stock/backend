@@ -30,7 +30,11 @@ public class StockNameCache {
         Map<String,StockInfoDto> allStockNames = stockRepository.findAllStockNames().stream()
                 .collect(Collectors.toMap(
                         StockNameProjection::getStckCode,
-                        projection -> StockInfoDto.builder().sid(projection.getSid()).stckName(projection.getStckName()).stckCode(projection.getStckCode()).build()
+                        projection -> StockInfoDto.builder()
+                                .sid(projection.getSid())
+                                .stckName(projection.getStckName())
+                                .stckCode(projection.getStckCode())
+                                .build()
                 ));
         stockNames.putAll(allStockNames);
 //        System.out.println("Stock names loaded: " + stockNames);

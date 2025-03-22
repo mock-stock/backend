@@ -35,7 +35,8 @@ public class KISApiServiceImpl implements KISApiService{
     private final TokenStorage tokenStorage;
     private final KISWebSocketClient kisWebSocketClient;
     private final StockValidator stockValidator;
-
+    private final Object historyLock = new Object();
+    private final Object priceLock = new Object();
     @Override
     public StockInfoOutput getDomesticStockInfo(String fidCondMrktDivCode, String fidInputIscd) {
         // URL 구성
@@ -59,9 +60,10 @@ public class KISApiServiceImpl implements KISApiService{
         ResponseEntity<StockInfoOutput> response;
         try{
         // API 호출
-        response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class); // 한투에서 output상위 속성이있어 상위클래스 StockInfoOuput으로 매핑되도록 설정
-//        System.out.println("response = " + response.getBody());
-
+            synchronized (priceLock) {
+                response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class);
+                Thread.sleep(500);
+            }
         } catch (HttpServerErrorException e) {
             // 예외로부터 응답 본문(JSON)을 추출
             String responseBody = e.getResponseBodyAsString();
@@ -86,6 +88,9 @@ public class KISApiServiceImpl implements KISApiService{
             } catch (Exception ex) {
                 System.err.println("JSON 파싱 오류: " + ex.getMessage());
             }
+            return null;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             return null;
         }
         return response.getBody();
@@ -144,18 +149,17 @@ public class KISApiServiceImpl implements KISApiService{
 
              try{
                  // API 호출
-                 response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class); // 한투에서 output상위 속성이있어 상위클래스 StockInfoOuput으로 매핑되도록 설정
-                 allData.addAll(response.getBody().getStockKisHistoryDto());
+                 synchronized (historyLock) {
+                     //  동기화된 블록 내부에서 호출
+                     response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class);
+                     allData.addAll(response.getBody().getStockKisHistoryDto());
 
-                 String lastHour = allData.get(allData.size()-1).getStckCntgHour();
+                     String lastHour = allData.get(allData.size() - 1).getStckCntgHour();
 
-                 if(lastHour.compareTo("090000") <= 0){
-                     break;
-                 } else{
-                     toDateTime = lastHour;
+                     if (lastHour.compareTo("090000") <= 0) break;
+                     else toDateTime = lastHour;
 
-                     Thread.sleep(500); // NOTE: 0.5초 대기, 이유: 한국투자증권 초당 요청건수 한계가있어서 어느정도 텀을 주기위해, 0.4초로하면 될때도있고 통과못할때도있기때문에 0.5로
-                     // TODO: 한국투자에 공통키로 서버쪽에서 유저가 요청하는만큼 요청해도 초당 요청한계가있어서 에러가 발생 만약 10명만 요청을 한번에 보내도 해당 리밋초과이기 떄문 이에 대한 해결책 강구필요
+                     Thread.sleep(500); // 요청 간 텀
                  }
              } catch (HttpServerErrorException e) {
                  // 예외로부터 응답 본문(JSON)을 추출
@@ -208,9 +212,10 @@ public class KISApiServiceImpl implements KISApiService{
             entity = new HttpEntity<>(headers);
 
             try{
-                // API 호출
-                response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class); // 한투에서 output상위 속성이있어 상위클래스 StockInfoOuput으로 매핑되도록 설정
-
+                synchronized (historyLock) {
+                    response = restTemplate.exchange(url, HttpMethod.GET, entity, StockInfoOutput.class);
+                    Thread.sleep(500); // 요청 간 딜레이 보장
+                }
             } catch (HttpServerErrorException e) {
                 // 예외로부터 응답 본문(JSON)을 추출
                 String responseBody = e.getResponseBodyAsString();
@@ -236,6 +241,8 @@ public class KISApiServiceImpl implements KISApiService{
                     System.err.println("JSON 파싱 오류: " + ex.getMessage());
                 }
                 return null;
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
 

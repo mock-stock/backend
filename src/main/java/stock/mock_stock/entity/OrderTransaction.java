@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -12,27 +13,27 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AccountTransaction {
+public class OrderTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long actid;
+    private Long otid;
+
+    @OneToOne
+    @JoinColumn(name = "oid", nullable = false)
+    private Order order;
 
     @Column(nullable = false)
-    private Long amount;
+    private Long stckExecUnitPrice;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TransactionType transactionType;
+    private Long stckExecQty;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @ManyToOne
-    @JoinColumn(name = "acid")
-    private Account account;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+
 }

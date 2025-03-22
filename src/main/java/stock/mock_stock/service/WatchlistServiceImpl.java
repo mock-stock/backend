@@ -32,14 +32,7 @@ public class WatchlistServiceImpl implements WatchlistService{
     public List<WatchlistResponseDto> getWatchList(Long uid)  {
         List<Watchlist> watchlist = watchlistRepository.findByUserUid(uid);
         return watchlist.stream().map(item -> {
-            synchronized (apiLock){ // NOTE: 배치, 캐싱으로도 파라미터가 다를땐 처리할수없기떄문에 동기화로 단일 쓰레드로 요청사이에 0.5초를 주워 에러발생하지않도록 처리, 하지만 100명이 동시에 요청했다면 0.5*100 =50초 딜레이 발생
-                // API 호출 전 대기 시간 추가 (기존 호출과 겹치지 않도록)
             StockInfoDto stockData = stockDetailService.getStockInfo(item.getStckCode());
-                try {
-                    Thread.sleep(500); // 초당요청건수땜에 추가
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
                 return WatchlistResponseDto.builder()
                     .wid(item.getWid())
                     .sid(item.getSid())
@@ -49,7 +42,7 @@ public class WatchlistServiceImpl implements WatchlistService{
                     .stckPrevClsDiffPrice(stockData.getStckPrevClsDiffPrice())
                     .stckPrevClsDiffPercent(stockData.getStckPrevClsDiffPercent())
                     .build();
-        }}).collect(Collectors.toList());
+        }).collect(Collectors.toList());
 
 
     }
