@@ -27,11 +27,9 @@ public class StockDetailServiceImpl implements StockDetailService {
     public StockInfoDto getStockInfo(String stckCode) {
         Stock stock = stockValidator.getStock(stckCode);
 
-        // TODO: 한투 API 호출하여 시세정보값 반환
         StockInfoOutput result = kisApiService.getDomesticStockInfo("J", stckCode);
         // 결과 DTO 변환
         // TODO: 현시세, 종가대비차익 부분 임시 값 넣어놓고 추후 실제 데이터로 변경
-
         return StockInfoDto.builder()
                 .sid(stock.getSid())
                 .stckName(stock.getStckName())
