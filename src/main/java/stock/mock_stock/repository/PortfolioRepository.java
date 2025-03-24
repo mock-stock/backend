@@ -4,8 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import stock.mock_stock.entity.Portfolio;
 import stock.mock_stock.entity.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
     public Optional<Portfolio> findByUserAndStckCode(User user, String stckCode);
+    public List<Portfolio> findByUserUid(Long uid);
 }

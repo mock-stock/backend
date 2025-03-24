@@ -18,11 +18,11 @@ public class StockInfoDto {
     @NotNull
     private String stckCode;
     @NotNull
-    private Long stckCurPrice;
+    private Long stckCurPrice; // NOTE: 현재가
     @NotNull
-    private Long stckPrevClsDiffPrice;
+    private Long stckPrevClsDiffPrice; // NOTE: 전일 종가대비 현재가 차익 금액
     @NotNull
-    private Double stckPrevClsDiffPercent;
+    private Double stckPrevClsDiffPercent; // NOTE: 전일 종가대비 현재가 차익 퍼센트
     //TODO: Double, Long 타입 맞는지 추후 체크
 
     public StockInfoDto(Long sid, String stckName, String stckCode, Long stckCurPrice, Long stckPrevClsDiffPrice, Double stckPrevClsDiffPercent){
