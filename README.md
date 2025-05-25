@@ -7,11 +7,10 @@
 
 또한 **한국투자증권 OpenAPI**를 연동하여 **실시간 시세 반영**, **가상 주문 처리**, **잔고 및 거래 내역 기록** 등의 기능을 제공합니다.
 
-
 ## Tech Stack
 - **Language & Frameworks**: Java 21, Spring Boot 3.3.6
-- **Database**: MySQL, H2 (for testing)
-- **ORM & Persistence**: Spring Data JPA, MyBatis
+- **Database**: MySQL
+- **ORM & Persistence**: Spring Data JPA
 - **API & Network**: RESTful API, WebSocket (STOMP)
 - **API Docs**: Swagger (SpringDoc OpenAPI 2.6.0)
 - **Security**: Spring Security, JWT
@@ -21,9 +20,9 @@
 - 사용자 인증/인가 (JWT 기반)
 - 계좌 등록 및 잔고 확인
 - 주식 매수 / 매도 / 주문 취소 처리
-- 실시간 WebSocket 기반 시세 전송
-- Redis를 통한 실시간 데이터 브로드캐스팅
-- 포트폴리오 및 거래 내역 조회
+- 한국투자증권 WebSocket 연동 기반 실시간 시세 전송
+- 투자 포트폴리오 조회
+- 거래 내역 조회
 
 ## ERD
 ![Mock_Stock (3).png](./images/erd.png)
