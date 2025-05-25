@@ -42,7 +42,7 @@ public class PortfolioServiceImpl implements PortfolioService{
             BigDecimal profitPercent = diff.divide(avgPurchasePrice, 10, RoundingMode.HALF_UP) // NOTE: 시세차익 퍼센트
                     .multiply(BigDecimal.valueOf(100))
                     .setScale(2, RoundingMode.HALF_UP);
-            
+
             return PortfolioResponseDto.builder()
                     .pfid(portfolio.getPfid())
                     .stckCode(portfolio.getStckCode())

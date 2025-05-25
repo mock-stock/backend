@@ -4,13 +4,17 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stock.mock_stock.common.StockNameCache;
+import stock.mock_stock.dto.OrderResponseDto;
 import stock.mock_stock.dto.StockInfoDto;
 import stock.mock_stock.entity.*;
 import stock.mock_stock.repository.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderTransactionRepository orderTransactionRepository;
     private final UserRepository userRepository;
     private final StockDetailService stockDetailService;
+    private final StockNameCache stockNameCache;
 
     @Override
     @Transactional
@@ -79,6 +84,27 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(OrderStatus.FILLED); // NOTE: 주문 체결 완료 처리, 이때 Dirty checking 적용됨, @Transactional 있다는 가정하에
 //        orderRepository.save(order);  // Dirty checking 으로 필요없음
         saveOrderTransaction(order);    // NOTE: 체결완료시 주문체결 저장
+    }
+
+    @Override
+    public List<OrderResponseDto> getOrders(Long uid, String stockCode, OrderStatus status) {
+        // TODO: 추후 필터로직도 추가
+
+        List<Order> orders = orderRepository.findByUserUid(uid);
+
+        return orders.stream().map((order)->{
+            String stockName = stockNameCache.getStockNameAndSid(order.getStckCode()).getStckName(); // NOTE: 종목 이름 캐시에서 가져오기
+            return OrderResponseDto.builder()
+                    .oid(order.getOid())
+                    .stckOrdTs(order.getCreatedAt())
+                    .stckOrdUnitPrice(order.getStckOrdUnitPrice())
+                    .orderType(order.getOrderType())
+                    .orderStatus(order.getOrderStatus())
+                    .tradeAction(order.getTradeAction())
+                    .stckOrdQty(order.getStckOrdQty())
+                    .stckName(stockName)
+                    .build();
+        }).collect(Collectors.toList());
     }
 
     private void saveOrderTransaction(Order order) {
