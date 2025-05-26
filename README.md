@@ -17,9 +17,7 @@
 - **Build Tool**: Gradle
 
 ## 아키텍처
-
 ![architecture.jpg](images/architecture.jpg)
-
 
 ## 주요 기능
 - 사용자 인증/인가 (JWT 기반)
