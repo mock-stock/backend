@@ -7,7 +7,7 @@
 
 또한 **한국투자증권 OpenAPI**를 연동하여 **실시간 시세 반영**, **가상 주문 처리**, **잔고 및 거래 내역 기록** 등의 기능을 제공합니다.
 
-## Tech Stack
+## 사용 기술
 - **Language & Frameworks**: Java 21, Spring Boot 3.3.6
 - **Database**: MySQL
 - **ORM & Persistence**: Spring Data JPA
@@ -15,6 +15,9 @@
 - **API Docs**: Swagger (SpringDoc OpenAPI 2.6.0)
 - **Security**: Spring Security, JWT
 - **Build Tool**: Gradle
+
+## 아키텍처
+![architecture.jpg](images/architecture.jpg)
 
 ## 주요 기능
 - 사용자 인증/인가 (JWT 기반)
