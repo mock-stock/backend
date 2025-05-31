@@ -42,6 +42,7 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
         if (!searchHistory.getUser().getUid().equals(userId)) {
             throw new AccessDeniedException("You are not authorized to delete this search history");
         }
+
         searchHistoryRepository.deleteById(fid);
     }
 }
