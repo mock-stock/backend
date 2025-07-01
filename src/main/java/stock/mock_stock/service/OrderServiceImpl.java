@@ -32,6 +32,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void processOrder(Long userId, String stockCode, Long orderQuantity, Long unitPrice, OrderType orderType, TradeActionType tradeActionType) {
+        // TODO: 동시성 체크후 있다면 문제 해결할 것
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
