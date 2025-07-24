@@ -36,7 +36,7 @@ public class SocialAccount {
 
 
     @Builder
-    public SocialAccount(User user, String provider, Long providerUserId) {
+    public SocialAccount(User user, String provider, Long providerUserId) { // TODO: 생성자 builder부분을 생성메서드(팩토리메서드) 방식으로
         this.user = user;
         this.provider = provider;
         this.providerUserId = providerUserId;

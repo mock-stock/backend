@@ -69,7 +69,7 @@ public class SearchHistoryIntegrationTest {
     }
 
     @Nested
-    class UnauthorizedTests { // ✅ "401 Unauthorized" 테스트 그룹
+    class UnauthorizedTests { // "401 Unauthorized" 테스트 그룹
         @Test
         void getSearchHistory_Failed_Unauthorized() throws Exception {
             mockMvc.perform(get("/stocks/search/history"))
