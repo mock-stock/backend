@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 @Entity
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class Stock {
+public class Stock { // TODO : NoArgConstructor, Protected 로 설정후 builder or 팩토리메서드로 수정할것
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sid;

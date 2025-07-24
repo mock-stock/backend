@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Table(name = "ms_user")  // 실제 테이블 이름과 매핑
-public class User {
+public class User { // TODO : NoArgConstructor, Protected 로 설정후 builder or 팩토리메서드로 수정할것
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

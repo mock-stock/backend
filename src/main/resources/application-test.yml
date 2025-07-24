@@ -8,8 +8,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+#    show-sql: true
     properties:
       hibernate:
         format_sql: true
+        highlight_sql: true  # 색상 강조
     database-platform: org.hibernate.dialect.MySQLDialect
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace
