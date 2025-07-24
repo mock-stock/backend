@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 @RequiredArgsConstructor
 public class KISApiServiceImpl implements KISApiService{
+    // TODO: 도메인 주도 설계 방식으로 수정 할것
 
     @Value("${api.korea-investment.base-url}")
     private String baseUrl;

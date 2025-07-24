@@ -15,6 +15,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SearchHistoryServiceImpl implements SearchHistoryService {
+    // TODO: 도메인 주도 설계 방식으로 수정 할것
     private final SearchHistoryRepository searchHistoryRepository;
 
     @Override

@@ -24,7 +24,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class KakaoAuthServiceImpl implements KakaoAuthService{
-
+    // TODO: 도메인 주도 설계 방식으로 수정 할것
     private final RestTemplate restTemplate;
     private final SocialAccountRepository socialAccountRepository;
     private final UserRepository userRepository;

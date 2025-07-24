@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class StockSearchServiceImpl implements StockSearchService{
-
+    // TODO: 도메인 주도 설계 방식으로 수정 할것
     private final StockRepository stockRepository;
     private final UserRepository userRepository;
     private final SearchHistoryRepository searchHistoryRepository;

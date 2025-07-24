@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PortfolioServiceImpl implements PortfolioService{
+    // TODO: 도메인 주도 설계 방식으로 수정 할것
     private final PortfolioRepository portfolioRepository;
     private final KISApiService kisApiService;
     private final StockNameCache stockNameCache;

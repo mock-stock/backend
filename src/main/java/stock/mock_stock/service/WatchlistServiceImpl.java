@@ -30,6 +30,7 @@ public class WatchlistServiceImpl implements WatchlistService{
 
     @Override
     public List<WatchlistResponseDto> getWatchList(Long uid)  {
+        // TODO: 도메인 주도 설계 방식으로 수정 할것
         List<Watchlist> watchlist = watchlistRepository.findByUserUid(uid);
         return watchlist.stream().map(item -> {
             StockInfoDto stockData = stockDetailService.getStockInfo(item.getStckCode());

@@ -17,7 +17,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService{
-
+    // TODO: 도메인 주도 설계 방식으로 수정 할것
     private final AccountRepository accountRepository;
     private final TransitionRepository transitionRepository;
 

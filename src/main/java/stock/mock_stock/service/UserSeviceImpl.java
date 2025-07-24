@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserSeviceImpl implements UserService {
-
+    // TODO: 도메인 주도 설계 방식으로 수정 할것
     private final UserRepository userRepository;
 
     @Override
