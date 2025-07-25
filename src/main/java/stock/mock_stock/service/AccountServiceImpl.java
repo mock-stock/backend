@@ -39,8 +39,9 @@ public class AccountServiceImpl implements AccountService{
     @Override
     @Transactional
     public void processTransaction(Long uid, Long amount) {
+        // TODO: dto 통째로 넘겨수 사용
         Account account = accountRepository.findByUserUid(uid)
-                .orElseThrow(()-> new EntityNotFoundException("account with id "+ uid+ " not found"));
+                .orElseThrow(()-> new EntityNotFoundException("account with id "+ uid+ " not found")); // 영속상태 엔티티 조회
 
         if (!account.getUser().getUid().equals(uid)) {
             throw new AccessDeniedException("You are not authorized to get this account");
@@ -63,7 +64,7 @@ public class AccountServiceImpl implements AccountService{
 
         //잔액 업데이트
         account.setBalance(account.getBalance() + amount);
-//        accountRepository.save(account); // NOTE: Dirty Checking wjrdyd
+//        accountRepository.save(account); // NOTE: Dirty Checking 변경감지
 
     }
 

@@ -31,7 +31,7 @@ public class OrderController {
                     orderRequestDto.getQuantity(),
                     orderRequestDto.getPrice(),
                     orderRequestDto.getOrderType(),
-                    TradeActionType.BUY);
+                    TradeActionType.BUY); // TODO: dto 통으로 넘겨서 dto사용 의도를 명확히할것, 필드가 많아질수록 유지보수 힘듬
 
 
             return ResponseEntity.ok().build();

@@ -36,7 +36,7 @@ public class AccountController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof Claims claims) {
             Long userId = Long.valueOf(claims.getSubject());
-            accountService.processTransaction(userId, transactionRequestDto.getAmount());
+            accountService.processTransaction(userId, transactionRequestDto.getAmount()); // TODO: dto 통째로 넘겨수 사용
             return;
         }
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated"); // 401 반환
